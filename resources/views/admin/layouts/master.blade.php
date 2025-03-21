@@ -82,7 +82,7 @@
                                     <a href="javascript:void(0);" class="dropdown-item py-3 border-bottom text-wrap">
                                         <div class="d-flex">
                                             <div class="flex-shrink-0">
-                                                <img src="assets/images/users/avatar-1.jpg"
+                                                <img src="/admin/assets/images/users/avatar-1.jpg"
                                                     class="img-fluid me-2 avatar-sm rounded-circle" alt="avatar-1" />
                                             </div>
                                             <div class="flex-grow-1">
@@ -115,7 +115,8 @@
                                     <a href="javascript:void(0);" class="dropdown-item py-3 border-bottom">
                                         <div class="d-flex">
                                             <div class="flex-shrink-0">
-                                                <img src="assets/images/users/avatar-3.jpg"
+
+                                                <img src="/admin/assets/images/users/avatar-3.jpg"
                                                     class="img-fluid me-2 avatar-sm rounded-circle" alt="avatar-3" />
                                             </div>
                                             <div class="flex-grow-1">
@@ -149,7 +150,8 @@
                                     <a href="javascript:void(0);" class="dropdown-item py-3 border-bottom">
                                         <div class="d-flex">
                                             <div class="flex-shrink-0">
-                                                <img src="assets/images/users/avatar-5.jpg"
+
+                                                <img src="/admin/assets/images/users/avatar-5.jpg"
                                                     class="img-fluid me-2 avatar-sm rounded-circle" alt="avatar-5" />
                                             </div>
                                             <div class="flex-grow-1">
@@ -329,7 +331,7 @@
                                 <div class="mb-4">
                                     <span
                                         class="position-absolute start-0 translate-middle-x bg-success bg-gradient d-inline-flex align-items-center justify-content-center rounded-circle text-light fs-20"><img
-                                            src="assets/images/users/avatar-7.jpg" alt="avatar-5"
+                                            src="/admin/assets/images/users/avatar-7.jpg" alt="avatar-5"
                                             class="avatar-sm rounded-circle"></span>
                                     <div class="ms-2">
                                         <h5 class="mb-0 text-dark fw-semibold fs-15 lh-base">Alex Smith
@@ -338,19 +340,20 @@
                                         <div class="row g-2 mt-2">
                                             <div class="col-lg-4">
                                                 <a href="#!">
-                                                    <img src="assets/images/small/img-6.jpg" alt=""
+                                                    <img src="/admin/assets/images/small/img-6.jpg" alt=""
                                                         class="img-fluid rounded">
                                                 </a>
                                             </div>
                                             <div class="col-lg-4">
                                                 <a href="#!">
-                                                    <img src="assets/images/small/img-3.jpg" alt=""
+
+                                                    <img src="/admin/assets/images/small/img-3.jpg" alt=""
                                                         class="img-fluid rounded">
                                                 </a>
                                             </div>
                                             <div class="col-lg-4">
                                                 <a href="#!">
-                                                    <img src="assets/images/small/img-4.jpg" alt=""
+                                                    <img src="/admin/assets/images/small/img-4.jpg" alt=""
                                                         class="img-fluid rounded">
                                                 </a>
                                             </div>
@@ -363,7 +366,7 @@
                                 <div class="mb-4">
                                     <span
                                         class="position-absolute start-0 translate-middle-x bg-success bg-gradient d-inline-flex align-items-center justify-content-center rounded-circle text-light fs-20"><img
-                                            src="assets/images/users/avatar-6.jpg" alt="avatar-5"
+                                            src="/admin/assets/images/users/avatar-6.jpg" alt="avatar-5"
                                             class="avatar-sm rounded-circle"></span>
                                     <div class="ms-2">
                                         <h5 class="mb-0 text-dark fw-semibold fs-15 lh-base">Rebecca J. added
@@ -528,13 +531,14 @@
             <!-- Sidebar Logo -->
             <div class="logo-box">
                 <a href="index.html" class="logo-dark">
-                    <img src="assets/images/logo-sm.png" class="logo-sm" alt="logo sm">
-                    <img src="assets/images/logo-dark.png" class="logo-lg" alt="logo dark">
+                    <img src="/admin/assets/images/logo-sm.png" class="logo-sm" alt="logo sm">
+                    <img src="/admin/assets/images/logo-dark.png" class="logo-lg" alt="logo dark">
                 </a>
 
-                <a href="index.html" class="logo-light">
-                    <img src="assets/images/logo-sm.png" class="logo-sm" alt="logo sm">
-                    <img src="assets/images/logo-light.png" class="logo-lg" alt="logo light">
+                <a href="dasboard" class="logo-light">
+                    <img src="/admin/assets/images/logo-sm.png" class="logo-sm" alt="logo sm">
+                    <img src="/admin/assets/images/logo-light.png" class="logo-lg" alt="logo light">
+
                 </a>
             </div>
 
@@ -559,29 +563,17 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link menu-arrow"
-                            href="{{ Auth::check() ? route('products.list') : route('login') }}">
+                        <a class="nav-link menu-arrow" href="#sidebarProducts" data-bs-toggle="collapse"
+                            role="button" aria-expanded="false" aria-controls="sidebarProducts">
                             <span class="nav-icon">
-                                <iconify-icon icon="solar:t-shirt-bold-duotone"></iconify-icon>
+                                <iconify-icon icon="maki:grocery"></iconify-icon>
                             </span>
-                            <span class="nav-text"> Products </span>
+                            <span class="nav-text"> Dishes </span>
                         </a>
                         <div class="collapse" id="sidebarProducts">
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="product-list.html">List</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="product-grid.html">Grid</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="product-details.html">Details</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="product-edit.html">Edit</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="product-add.html">Create</a>
+                                    <a class="sub-nav-link" href="{{ route('dish_list') }}">Danh sách</a>
                                 </li>
                             </ul>
                         </div>
@@ -598,19 +590,31 @@
                         <div class="collapse" id="sidebarCategory">
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="category-list.html">List</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="category-edit.html">Edit</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="category-add.html">Create</a>
+                                    <a class="sub-nav-link" href="{{ route('category-list') }}">Danh sách</a>
+
                                 </li>
                             </ul>
                         </div>
                     </li>
 
                     <li class="nav-item">
+                        <a class="nav-link menu-arrow" href="#sidebarSubCategory" data-bs-toggle="collapse"
+                            role="button" aria-expanded="false" aria-controls="sidebarSubCategory">
+                            <span class="nav-icon">
+                                <iconify-icon icon="line-md:clipboard-list"></iconify-icon>
+                            </span>
+                            <span class="nav-text"> Sub Category </span>
+                        </a>
+                        <div class="collapse" id="sidebarSubCategory">
+                            <ul class="nav sub-navbar-nav">
+                                <li class="sub-nav-item">
+                                    <a class="sub-nav-link" href="{{ route('sub_category_list') }}">Danh sách</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+
                         <a class="nav-link menu-arrow" href="#sidebarInventory" data-bs-toggle="collapse"
                             role="button" aria-expanded="false" aria-controls="sidebarInventory">
                             <span class="nav-icon">
@@ -1175,8 +1179,8 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link menu-arrow" href="#sidebarForms" data-bs-toggle="collapse" role="button"
-                            aria-expanded="false" aria-controls="sidebarForms">
+                        <a class="nav-link menu-arrow" href="#sidebarForms" data-bs-toggle="collapse"
+                            role="button" aria-expanded="false" aria-controls="sidebarForms">
                             <span class="nav-icon">
                                 <iconify-icon icon="solar:book-bookmark-bold-duotone"></iconify-icon>
                             </span>

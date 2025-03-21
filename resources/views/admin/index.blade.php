@@ -402,7 +402,7 @@
                                         </td>
                                         <td>25 April 2024</td>
                                         <td>
-                                            <img src="assets/images/products/product-4.png" alt="product-4"
+                                            <img src="/admin/assets/images/products/product-4.png" alt="product-4"
                                                 class="img-fluid avatar-sm">
                                         </td>
                                         <td>
@@ -422,7 +422,7 @@
                                         </td>
                                         <td>25 April 2024</td>
                                         <td>
-                                            <img src="assets/images/products/product-5.png" alt="product-5"
+                                            <img src="/admin/assets/images/products/product-5.png" alt="product-5"
                                                 class="img-fluid avatar-sm">
                                         </td>
                                         <td>
@@ -442,7 +442,7 @@
                                         </td>
                                         <td>21 April 2024</td>
                                         <td>
-                                            <img src="assets/images/products/product-6.png" alt="product-6"
+                                            <img src="/admin/assets/images/products/product-6.png" alt="product-6"
                                                 class="img-fluid avatar-sm">
                                         </td>
                                         <td>
@@ -464,7 +464,7 @@
                                         </td>
                                         <td>18 April 2024</td>
                                         <td>
-                                            <img src="assets/images/products/product-1(2).png" alt="product-1(2)"
+                                            <img src="/admin/assets/images/products/product-1(2).png" alt="product-1(2)"
                                                 class="img-fluid avatar-sm">
                                         </td>
                                         <td>
@@ -482,6 +482,7 @@
                                 <!-- end tbody -->
                             </table>
                             <!-- end table -->
+                            >>>>>>> master
                         </div>
                         <!-- table responsive -->
 
@@ -527,5 +528,23 @@
         </div>
         <!-- End Container Fluid -->
 
-    </div>
+        <!-- ========== Footer Start ========== -->
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <script>
+                            document.write(new Date().getFullYear())
+                        </script> &copy; Larkon. Crafted by
+                        <iconify-icon icon="iconamoon:heart-duotone"
+                            class="fs-18 align-middle text-danger"></iconify-icon> <a
+                            href="https://1.envato.market/techzaa" class="fw-bold footer-text"
+                            target="_blank">Techzaa</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- ========== Footer End ========== -->
+
 @endsection
+>>>>>>> master
