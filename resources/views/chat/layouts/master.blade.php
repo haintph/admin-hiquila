@@ -15,23 +15,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-    <!-- App favicon -->
     @include('admin.layouts.partials.style')
-    <style>
-        .user-avatar {
-            width: 45px;
-            /* Tăng kích thước ảnh */
-            height: 45px;
-            border: 3px solid #fff;
-            /* Thêm viền trắng */
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            /* Hiệu ứng bóng nhẹ */
-            object-fit: cover;
-            /* Cắt ảnh vừa khung tròn */
-        }
-    </style>
 </head>
 
 <body>
@@ -251,14 +235,6 @@
                         @if (Auth::check())
                             <!-- Nếu đã đăng nhập -->
                             <div class="dropdown topbar-item">
-                                {{-- <a type="button" class="topbar-button" id="page-header-user-dropdown"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="d-flex align-items-center">
-                                        <img class="rounded-circle" width="40"
-                                            src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('/admin/assets/images/users/avatar-1.jpg') }}"
-                                            alt="avatar">
-                                    </span>
-                                </a> --}}
                                 <a type="button" class="topbar-button" id="page-header-user-dropdown"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="d-flex align-items-center">

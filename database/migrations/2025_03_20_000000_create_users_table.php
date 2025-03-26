@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['Chủ', 'Quản lý', 'Nhân viên', 'Đầu bếp', 'Thu ngân'])->default('Nhân viên');
+            $table->enum('role', ['owner', 'manager', 'staff', 'chef', 'cashier'])->default('staff');
             $table->rememberToken();
             $table->timestamps();
         });

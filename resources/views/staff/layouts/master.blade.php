@@ -12,26 +12,12 @@
     <meta name="description" content="A fully responsive premium admin dashboard template" />
     <meta name="author" content="Techzaa" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <!-- App favicon -->
     @include('admin.layouts.partials.style')
-    <style>
-        .user-avatar {
-            width: 45px;
-            /* Tăng kích thước ảnh */
-            height: 45px;
-            border: 3px solid #fff;
-            /* Thêm viền trắng */
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            /* Hiệu ứng bóng nhẹ */
-            object-fit: cover;
-            /* Cắt ảnh vừa khung tròn */
-        }
-    </style>
+    <!-- Theme Config js (Require in all Page) -->
+
 </head>
 
 <body>
@@ -251,35 +237,25 @@
                         @if (Auth::check())
                             <!-- Nếu đã đăng nhập -->
                             <div class="dropdown topbar-item">
-                                {{-- <a type="button" class="topbar-button" id="page-header-user-dropdown"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="d-flex align-items-center">
-                                        <img class="rounded-circle" width="40"
-                                            src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('/admin/assets/images/users/avatar-1.jpg') }}"
-                                            alt="avatar">
-                                    </span>
-                                </a> --}}
                                 <a type="button" class="topbar-button" id="page-header-user-dropdown"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="d-flex align-items-center">
-                                        <img class="rounded-circle user-avatar"
-                                            src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('/admin/assets/images/users/avatar-1.jpg') }}"
-                                            alt="avatar">
+                                        <img class="rounded-circle" width="32"
+                                            src="/admin/assets/images/users/avatar-1.jpg" alt="avatar">
                                     </span>
                                 </a>
-
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <h6 class="dropdown-header">Welcome, {{ Auth::user()->name }}!</h6>
-                                    <a class="dropdown-item" href="{{ route('profile') }}">
+                                    <a class="dropdown-item" href="#">
                                         <i class="fa-solid fa-user text-muted fs-18 align-middle me-1"></i>
                                         <span class="align-middle">Profile</span>
                                     </a>
-
-                                    <a class="dropdown-item" href="{{ route('chat.index') }}">
+                                    
+                                    <a class="dropdown-item" href="apps-chat.html">
                                         <i class="bx bx-message-dots text-muted fs-18 align-middle me-1"></i><span
                                             class="align-middle">Messages</span>
                                     </a>
-
+    
                                     <a class="dropdown-item" href="pages-pricing.html">
                                         <i class="bx bx-wallet text-muted fs-18 align-middle me-1"></i><span
                                             class="align-middle">Pricing</span>
@@ -290,9 +266,9 @@
                                             class="align-middle">Help</span>
                                     </a>
 
-                                    <a class="dropdown-item" href="{{ route('profile.changePassword') }}">
+                                    <a class="dropdown-item" href="auth-lock-screen.html">
                                         <i class="bx bx-lock text-muted fs-18 align-middle me-1"></i><span
-                                            class="align-middle">Change Password</span>
+                                            class="align-middle">Lock screen</span>
                                     </a>
                                     <div class="dropdown-divider my-1"></div>
                                     <form method="POST" action="{{ route('logout') }}">
@@ -315,15 +291,15 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <!-- item-->
-                                    <h6 class="dropdown-header">Khách hàng truy cập chưa đăng nhập!</h6>
+                                    <h6 class="dropdown-header">Khách hàng truy cập chưa đăng nhập!</h6>                          
                                     <div class="dropdown-divider my-1"></div>
 
                                     <a class="dropdown-item text-success" href="{{ route('login') }}">
                                         <i class="bx bx-log-in fs-18 align-middle me-1"></i>
                                         <span class="align-middle">Login</span>
-                                    </a>
+                                    </a>                                    
                                 </div>
-                            </div>
+                            </div>                                                       
                         @endif
 
 
