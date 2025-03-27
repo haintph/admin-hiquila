@@ -9,8 +9,10 @@ class Area extends Model
 {
     use HasFactory;
 
-    protected $table = 'areas';
+    protected $table = 'areas'; // Tên bảng
     protected $primaryKey = 'area_id';
+
+    public $timestamps = true; // Sử dụng timestamps
     protected $fillable = [
         'name',
         'description',
@@ -22,4 +24,8 @@ class Area extends Model
         'surcharge',
         'image'
     ];
+    public function tables()
+    {
+        return $this->hasMany(Table::class, 'area_id', 'area_id');
+    }
 }

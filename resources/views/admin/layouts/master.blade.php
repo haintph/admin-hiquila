@@ -669,12 +669,12 @@
                             <span class="nav-icon">
                                 <iconify-icon icon="solar:card-send-bold-duotone"></iconify-icon>
                             </span>
-                            <span class="nav-text"> Purchases </span>
+                            <span class="nav-text"> Areas </span>
                         </a>
                         <div class="collapse" id="sidebarPurchases">
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="purchase-list.html">List</a>
+                                    <a class="sub-nav-link" href="{{ route('areas.index') }}">List</a>
                                 </li>
                                 <li class="sub-nav-item">
                                     <a class="sub-nav-link" href="purchase-order.html">Order</a>
@@ -690,20 +690,15 @@
                         <a class="nav-link menu-arrow" href="#sidebarAttributes" data-bs-toggle="collapse"
                             role="button" aria-expanded="false" aria-controls="sidebarAttributes">
                             <span class="nav-icon">
-                                <iconify-icon icon="solar:confetti-minimalistic-bold-duotone"></iconify-icon>
+                                <iconify-icon icon="mdi:table-chair"></iconify-icon>
+
                             </span>
-                            <span class="nav-text"> Attributes </span>
+                            <span class="nav-text"> Tables </span>
                         </a>
                         <div class="collapse" id="sidebarAttributes">
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="attributes-list.html">List</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="attributes-edit.html">Edit</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="attributes-add.html">Create</a>
+                                    <a class="sub-nav-link" href="{{route('tables.index')}}">List</a>
                                 </li>
                             </ul>
                         </div>
@@ -720,13 +715,7 @@
                         <div class="collapse" id="sidebarInvoice">
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="invoice-list.html">List</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="invoice-details.html">Details</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="invoice-add.html">Create</a>
+                                    <a class="sub-nav-link" href="{{route('invoices.index')}}">List</a>
                                 </li>
                             </ul>
                         </div>

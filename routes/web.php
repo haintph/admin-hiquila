@@ -9,6 +9,10 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DishImageController;
 use App\Http\Controllers\DishVariantController;
 use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\TableController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\PayPalController;
+use App\Http\Controllers\VnpayController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,8 +32,6 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-//Vị trí bố cụccục
-Route::resource('areas', AreaController::class);
 
 //Phân quyền 
 Route::middleware(['auth'])->group(function () {
@@ -37,10 +39,44 @@ Route::middleware(['auth'])->group(function () {
 
     // Chỉ Chủ mới vào được /admin/settings
     Route::middleware(['role:Chủ'])->group(function () {
-        Route::middleware(['role:Chủ'])->group(function () {
-            Route::get('/products', [DishController::class, 'index'])
-                ->name('products.list');
-        });
+        //paypal
+        Route::get('/paypal/payment/{invoice_id}', [PayPalController::class, 'createPayment'])->name('paypal.payment');
+        Route::get('/paypal/success', [PayPalController::class, 'success'])->name('paypal.success');
+        Route::get('/paypal/cancel', [PayPalController::class, 'cancel'])->name('paypal.cancel');
+        Route::get('/invoices/check-payment/{invoice_id}', [InvoiceController::class, 'checkPayment'])->name('invoices.checkPayment');
+
+        //Thanh toan vnpay
+        Route::get('/vnpay-payment/{invoice_id}', [VnpayController::class, 'createPayment'])->name('vnpay.payment');
+        Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return');
+        //Vị trí bố cụccục
+        Route::resource('areas', AreaController::class);
+        Route::put('/areas/update/{id}', [AreaController::class, 'update'])->name('areas.update');
+
+        //Quản lý bàn 
+        Route::resource('tables', TableController::class);
+
+        // Danh sách hóa đơn
+        Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+        // Tạo hóa đơn mới
+        Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
+        Route::get('/get-tables/{area_id}', [InvoiceController::class, 'getTables']);
+
+        Route::post('/invoices/store', [InvoiceController::class, 'store'])->name('invoices.store');
+        // Chỉnh sửa hóa đơn
+        Route::get('/invoices/{id}/edit', [InvoiceController::class, 'edit'])->name('invoices.edit');
+        Route::put('/invoices/{invoice_id}/update', [InvoiceController::class, 'update'])->name('invoices.update');
+        //Thêm món ăn
+        Route::post('/invoices/{id}/add-dish', [InvoiceController::class, 'addDish'])->name('invoices.addDish');
+        //Thanh toán
+        Route::get('/invoices/{id}/checkout', [InvoiceController::class, 'checkout'])->name('invoices.checkout');
+        Route::get('/invoices/{id}/payment', [InvoiceController::class, 'payment'])->name('invoices.payment');
+        Route::get('/invoices/{id}/confirm-payment', [InvoiceController::class, 'confirmPayment'])->name('invoices.confirmPayment');
+
+        // Xóa hóa đơn
+        Route::delete('/invoices/{id}/delete', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+        // In hóa đơn
+        Route::get('/invoices/{id}/print', [InvoiceController::class, 'print'])->name('invoices.print');
+
 
         // Category management
         Route::get('category-list', [CategoryController::class, 'list'])->name('category-list');
@@ -68,6 +104,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('dish_edit/{id}', [DishController::class, 'edit'])->name('dish_edit');
         Route::put('dish_update/{id}', [DishController::class, 'update'])->name('dish_update');
         Route::delete('dish_destroy/{id}', [DishController::class, 'destroy'])->name('dish_destroy');
+        //search món ăn
+        Route::get('/search-dishes', [DishController::class, 'search'])->name('dishes.search');
+
         //vảiant
         // Route::get('/dishes/{id}', [DishController::class, 'show'])->name('dishes.show');
         Route::get('/dish_detail/show/{id}', [DishController::class, 'show'])->name('dish_detail');

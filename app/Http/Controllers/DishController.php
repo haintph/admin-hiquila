@@ -192,4 +192,13 @@ class DishController extends Controller
 
         return response()->json(['success' => false]);
     }
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+        $dishes = Dish::where('name', 'LIKE', "%$search%")
+            ->orWhere('price', 'LIKE', "%$search%")
+            ->get(['id', 'name', 'price']);
+
+        return response()->json($dishes);
+    }
 }

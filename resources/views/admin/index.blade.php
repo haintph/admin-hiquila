@@ -482,7 +482,6 @@
                                 <!-- end tbody -->
                             </table>
                             <!-- end table -->
-                            >>>>>>> master
                         </div>
                         <!-- table responsive -->
 
@@ -547,4 +546,3 @@
         <!-- ========== Footer End ========== -->
 
 @endsection
->>>>>>> master
