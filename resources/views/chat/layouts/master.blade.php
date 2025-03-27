@@ -15,24 +15,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-    <!-- App favicon -->
     @include('admin.layouts.partials.style')
-    <!-- Theme Config js (Require in all Page) -->
-    <style>
-        .user-avatar {
-            width: 45px;
-            /* Tăng kích thước ảnh */
-            height: 45px;
-            border: 3px solid #fff;
-            /* Thêm viền trắng */
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            /* Hiệu ứng bóng nhẹ */
-            object-fit: cover;
-            /* Cắt ảnh vừa khung tròn */
-        }
-    </style>
 </head>
 
 <body>
@@ -205,21 +188,57 @@
                         </div>
 
                         <!-- User -->
+                        {{-- <div class="dropdown topbar-item">
+                            <a type="button" class="topbar-button" id="page-header-user-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="d-flex align-items-center">
+                                    <img class="rounded-circle" width="32"
+                                        src="/admin/assets/images/users/avatar-1.jpg" alt="avatar-3">
+                                </span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <!-- item-->
+                                <h6 class="dropdown-header">Welcome Gaston!</h6>
+                                <a class="dropdown-item" href="pages-profile.html">
+                                    <i class="bx bx-user-circle text-muted fs-18 align-middle me-1"></i><span
+                                        class="align-middle">Profile</span>
+                                </a>
+                                <a class="dropdown-item" href="apps-chat.html">
+                                    <i class="bx bx-message-dots text-muted fs-18 align-middle me-1"></i><span
+                                        class="align-middle">Messages</span>
+                                </a>
+
+                                <a class="dropdown-item" href="pages-pricing.html">
+                                    <i class="bx bx-wallet text-muted fs-18 align-middle me-1"></i><span
+                                        class="align-middle">Pricing</span>
+                                </a>
+                                <a class="dropdown-item" href="pages-faqs.html">
+                                    <i class="bx bx-help-circle text-muted fs-18 align-middle me-1"></i><span
+                                        class="align-middle">Help</span>
+                                </a>
+                                <a class="dropdown-item" href="auth-lock-screen.html">
+                                    <i class="bx bx-lock text-muted fs-18 align-middle me-1"></i><span
+                                        class="align-middle">Lock screen</span>
+                                </a>
+
+                                <div class="dropdown-divider my-1"></div>
+
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bx bx-log-out fs-18 align-middle me-1"></i>
+                                        <span class="align-middle">Logout</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div> --}}
                         @if (Auth::check())
                             <!-- Nếu đã đăng nhập -->
                             <div class="dropdown topbar-item">
-                                {{-- <a type="button" class="topbar-button" id="page-header-user-dropdown"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="d-flex align-items-center">
-                                    <img class="rounded-circle" width="40"
-                                        src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('/admin/assets/images/users/avatar-1.jpg') }}"
-                                        alt="avatar">
-                                </span>
-                            </a> --}}
                                 <a type="button" class="topbar-button" id="page-header-user-dropdown"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="d-flex align-items-center">
-                                        <img class="rounded-circle user-avatar" width="32"
+                                        <img class="rounded-circle user-avatar"
                                             src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('/admin/assets/images/users/avatar-1.jpg') }}"
                                             alt="avatar">
                                     </span>
@@ -282,6 +301,9 @@
                                 </div>
                             </div>
                         @endif
+
+
+
                         <!-- App Search-->
                         <form class="app-search d-none d-md-block ms-2">
                             <div class="position-relative">
@@ -671,6 +693,8 @@
                             </ul>
                         </div>
                     </li>
+
+
                     <li class="nav-item">
                         <a class="nav-link menu-arrow" href="#sidebarInventory" data-bs-toggle="collapse"
                             role="button" aria-expanded="false" aria-controls="sidebarInventory">
@@ -726,12 +750,12 @@
                             <span class="nav-icon">
                                 <iconify-icon icon="solar:card-send-bold-duotone"></iconify-icon>
                             </span>
-                            <span class="nav-text"> Areas </span>
+                            <span class="nav-text"> Purchases </span>
                         </a>
                         <div class="collapse" id="sidebarPurchases">
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="{{ route('areas.index') }}">List</a>
+                                    <a class="sub-nav-link" href="purchase-list.html">List</a>
                                 </li>
                                 <li class="sub-nav-item">
                                     <a class="sub-nav-link" href="purchase-order.html">Order</a>
@@ -747,15 +771,20 @@
                         <a class="nav-link menu-arrow" href="#sidebarAttributes" data-bs-toggle="collapse"
                             role="button" aria-expanded="false" aria-controls="sidebarAttributes">
                             <span class="nav-icon">
-                                <iconify-icon icon="mdi:table-chair"></iconify-icon>
-
+                                <iconify-icon icon="solar:confetti-minimalistic-bold-duotone"></iconify-icon>
                             </span>
-                            <span class="nav-text"> Tables </span>
+                            <span class="nav-text"> Attributes </span>
                         </a>
                         <div class="collapse" id="sidebarAttributes">
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="{{ route('tables.index') }}">List</a>
+                                    <a class="sub-nav-link" href="attributes-list.html">List</a>
+                                </li>
+                                <li class="sub-nav-item">
+                                    <a class="sub-nav-link" href="attributes-edit.html">Edit</a>
+                                </li>
+                                <li class="sub-nav-item">
+                                    <a class="sub-nav-link" href="attributes-add.html">Create</a>
                                 </li>
                             </ul>
                         </div>
@@ -772,7 +801,13 @@
                         <div class="collapse" id="sidebarInvoice">
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="{{ route('invoices.index') }}">List</a>
+                                    <a class="sub-nav-link" href="invoice-list.html">List</a>
+                                </li>
+                                <li class="sub-nav-item">
+                                    <a class="sub-nav-link" href="invoice-details.html">Details</a>
+                                </li>
+                                <li class="sub-nav-item">
+                                    <a class="sub-nav-link" href="invoice-add.html">Create</a>
                                 </li>
                             </ul>
                         </div>
@@ -844,10 +879,7 @@
                             <ul class="nav sub-navbar-nav">
 
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="customer-list.html">List</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="customer-detail.html">Details</a>
+                                    <a class="sub-nav-link" href="#">Danh sách</a>
                                 </li>
                             </ul>
                         </div>
@@ -1225,8 +1257,8 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link menu-arrow" href="#sidebarForms" data-bs-toggle="collapse" role="button"
-                            aria-expanded="false" aria-controls="sidebarForms">
+                        <a class="nav-link menu-arrow" href="#sidebarForms" data-bs-toggle="collapse"
+                            role="button" aria-expanded="false" aria-controls="sidebarForms">
                             <span class="nav-icon">
                                 <iconify-icon icon="solar:book-bookmark-bold-duotone"></iconify-icon>
                             </span>
@@ -1390,56 +1422,7 @@
         <!-- ==================================================== -->
         <!-- Start right Content here -->
         <!-- ==================================================== -->
-        <div class="page-content">
-            {{-- @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                        aria-label="Close"></button>
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                        aria-label="Close"></button>
-                </div>
-            @endif
-
-            @if ($errors->any())
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    @foreach ($errors->all() as $error)
-                        <p>{{ $error }}</p>
-                    @endforeach
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                        aria-label="Close"></button>
-                </div>
-            @endif --}}
-
-            <!-- Start Container Fluid -->
-            @yield('content')
-            <!-- End Container Fluid -->
-
-            <!-- ========== Footer Start ========== -->
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <script>
-                                document.write(new Date().getFullYear())
-                            </script> &copy; Larkon. Crafted by
-                            <iconify-icon icon="iconamoon:heart-duotone"
-                                class="fs-18 align-middle text-danger"></iconify-icon> <a
-                                href="https://1.envato.market/techzaa" class="fw-bold footer-text"
-                                target="_blank">Techzaa</a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-            <!-- ========== Footer End ========== -->
-
-        </div>
+        @yield('content')
         <!-- ==================================================== -->
         <!-- End Page Content -->
         <!-- ==================================================== -->

@@ -13,7 +13,11 @@ use App\Http\Controllers\TableController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PayPalController;
 use App\Http\Controllers\VnpayController;
-
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ChatController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,12 +38,40 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+//Profile
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile')->middleware('auth');
+//Change password - Profile
+Route::get('/profile/change-password', function () {
+    return view('admin.auth.ChangePassword');
+})->name('profile.changePassword');
+Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+
+Route::prefix('chat')->name('chat.')->middleware(['auth'])->group(function () {
+    Route::get('/', [ChatController::class, 'index'])->name('index');
+    Route::get('/{user}', [ChatController::class, 'show'])->name('show');
+    Route::post('/send', [ChatController::class, 'send'])->name('send');
+    Route::post('/mark-as-read', [ChatController::class, 'markAsRead'])->name('markAsRead');
+    Route::delete('/message/{message}', [ChatController::class, 'deleteMessage'])->name('deleteMessage');
+    Route::post('/reaction', [ChatController::class, 'addReaction'])->name('addReaction');
+    
+    // Online status management
+    Route::get('/update-status', function () {
+        if (Auth::check()) {
+            Cache::put('user-is-online-' . Auth::id(), true, now()->addMinutes(5));
+            Cache::put('user-last-seen-' . Auth::id(), now(), now()->addDays(1));
+        }
+        return response()->json(['status' => 'updated']);
+    })->name('updateStatus');
+    
+    Route::get('/get-unread-count', [ChatController::class, 'getUnreadCount'])->name('unreadCount');
+});
+
 //Phân quyền 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/owner', [AdminController::class, 'index'])->name('owner.dashboard');
 
     // Chỉ Chủ mới vào được /admin/settings
-    Route::middleware(['role:Chủ'])->group(function () {
+    Route::middleware(['role:owner'])->group(function () {
         //paypal
         Route::get('/paypal/payment/{invoice_id}', [PayPalController::class, 'createPayment'])->name('paypal.payment');
         Route::get('/paypal/success', [PayPalController::class, 'success'])->name('paypal.success');
@@ -120,17 +152,24 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/dish/image/update/{id}', [DishController::class, 'updateImage'])->name('dish_image_update');
         Route::post('/dishes/{dish}/upload-images', [DishImageController::class, 'store'])->name('dishes.upload_images');
         Route::delete('/dish/image/delete/{id}', [DishController::class, 'deleteImage'])->name('dish_image_delete');
+
+         // 🌟 Quản lý người dùng (users)
+         Route::get('user_list', [UserController::class, 'list'])->name('user_list');
+         Route::get('user_create', [UserController::class, 'create'])->name('user_create');
+         Route::post('user_store', [UserController::class, 'store'])->name('user_store');
+         Route::get('user_edit/{id}', [UserController::class, 'edit'])->name('user_edit');
+         Route::put('user_update/{id}', [UserController::class, 'update'])->name('user_update');
+         Route::delete('user_destroy/{id}', [UserController::class, 'destroy'])->name('user_destroy');
+         Route::get('user_detail/{id}', [UserController::class, 'detail'])->name('user_detail');
     });
     // Trang dành cho Quản lý
-    Route::middleware(['role:Quản lý'])->group(function () {
+    Route::middleware(['role:manager'])->group(function () {
         Route::get('/manager', function () {
             return "Trang dành cho Quản lý";
         });
     });
     // Trang dành cho Nhân viên
-    Route::middleware(['role:Nhân viên'])->group(function () {
-        Route::get('/staff', function () {
-            return "Trang dành cho Nhân viên";
-        });
+    Route::middleware(['role:staff'])->group(function () {
+        Route::get('/staff', [AdminController::class, 'index'])->name('staff.dashboard');
     });
 });

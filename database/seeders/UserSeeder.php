@@ -14,22 +14,24 @@ class UserSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('123456'),
-            'role' => 'Chủ'
+            'role' => 'owner'
         ]);
 
+        
         User::create([
             'name' => 'Manager',
             'email' => 'manager@gmail.com',
             'password' => Hash::make('123456'),
-            'role' => 'Quản lý'
+            'role' => 'manager'
         ]);
 
         User::create([
             'name' => 'Staff',
             'email' => 'staff@gmail.com',
             'password' => Hash::make('123456'),
-            'role' => 'Nhân viên'
+            'role' => 'staff'
         ]);
+        // User::factory()->count(5)->create();
     }
 }
 
