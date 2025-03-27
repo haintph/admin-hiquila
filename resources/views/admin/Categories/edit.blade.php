@@ -37,7 +37,6 @@
             background-color: #0056b3;
         }
     </style>
-
     <!-- Start Container Fluid -->
     <div class="container-xxl">
         <div class="row">
@@ -148,4 +147,5 @@
         </div>
     </footer>
     <!-- ========== Footer End ========== -->
+
 @endsection

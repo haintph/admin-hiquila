@@ -482,6 +482,7 @@
                                 <!-- end tbody -->
                             </table>
                             <!-- end table -->
+
                         </div>
                         <!-- table responsive -->
 
@@ -544,5 +545,4 @@
             </div>
         </footer>
         <!-- ========== Footer End ========== -->
-
 @endsection

@@ -25,6 +25,5 @@ class DatabaseSeeder extends Seeder
             // DishSeeder::class,
             SubCategorySeeder::class,
         ]);
-
     }
 }

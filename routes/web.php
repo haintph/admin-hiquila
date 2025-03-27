@@ -14,6 +14,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PayPalController;
 use App\Http\Controllers\VnpayController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -77,7 +78,6 @@ Route::middleware(['auth'])->group(function () {
         // In hóa đơn
         Route::get('/invoices/{id}/print', [InvoiceController::class, 'print'])->name('invoices.print');
 
-
         // Category management
         Route::get('category-list', [CategoryController::class, 'list'])->name('category-list');
         Route::get('category-create', [CategoryController::class, 'create'])->name('category-create');
@@ -104,6 +104,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('dish_edit/{id}', [DishController::class, 'edit'])->name('dish_edit');
         Route::put('dish_update/{id}', [DishController::class, 'update'])->name('dish_update');
         Route::delete('dish_destroy/{id}', [DishController::class, 'destroy'])->name('dish_destroy');
+
         //search món ăn
         Route::get('/search-dishes', [DishController::class, 'search'])->name('dishes.search');
 

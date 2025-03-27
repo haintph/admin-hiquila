@@ -54,6 +54,7 @@
                                 <div class="mb-0">
                                     <label for="description" class="form-label">Miêu tả</label>
                                     <textarea class="form-control bg-light-subtle" name="description" rows="7" readonly>{{ $dish->description }}</textarea>
+
                                 </div>
                             </div>
                         </div>
@@ -126,13 +127,11 @@
             </div>
         </div>
     </div>
-
-
     <script>
         function editVariant(variant) {
             alert("Bạn muốn chỉnh sửa biến thể: " + variant.name);
             // Thêm logic mở modal hoặc điều hướng đến trang sửa biến thể
         }
     </script>
-
 @endsection
+

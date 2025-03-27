@@ -115,7 +115,6 @@
                                     <a href="javascript:void(0);" class="dropdown-item py-3 border-bottom">
                                         <div class="d-flex">
                                             <div class="flex-shrink-0">
-
                                                 <img src="/admin/assets/images/users/avatar-3.jpg"
                                                     class="img-fluid me-2 avatar-sm rounded-circle" alt="avatar-3" />
                                             </div>
@@ -150,7 +149,6 @@
                                     <a href="javascript:void(0);" class="dropdown-item py-3 border-bottom">
                                         <div class="d-flex">
                                             <div class="flex-shrink-0">
-
                                                 <img src="/admin/assets/images/users/avatar-5.jpg"
                                                     class="img-fluid me-2 avatar-sm rounded-circle" alt="avatar-5" />
                                             </div>
@@ -191,36 +189,50 @@
                         </div>
 
                         <!-- User -->
-                        @if (Auth::check())
-                            <div class="dropdown topbar-item">
-                                <a type="button" class="topbar-button" id="page-header-user-dropdown"
-                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="d-flex align-items-center">
-                                        <img class="rounded-circle" width="32"
-                                            src="{{ asset('assets/images/users/avatar-1.jpg') }}" alt="avatar">
-                                    </span>
+                        <div class="dropdown topbar-item">
+                            <a type="button" class="topbar-button" id="page-header-user-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="d-flex align-items-center">
+                                    <img class="rounded-circle" width="32"
+                                        src="/admin/assets/images/users/avatar-1.jpg" alt="avatar-3">
+                                </span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <!-- item-->
+                                <h6 class="dropdown-header">Welcome Gaston!</h6>
+                                <a class="dropdown-item" href="pages-profile.html">
+                                    <i class="bx bx-user-circle text-muted fs-18 align-middle me-1"></i><span
+                                        class="align-middle">Profile</span>
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <h6 class="dropdown-header">Welcome {{ Auth::user()->name }}!</h6>
+                                <a class="dropdown-item" href="apps-chat.html">
+                                    <i class="bx bx-message-dots text-muted fs-18 align-middle me-1"></i><span
+                                        class="align-middle">Messages</span>
+                                </a>
 
-                                    <a class="dropdown-item" href="">
-                                        <i class="bx bx-user-circle text-muted fs-18 align-middle me-1"></i>
-                                        <span class="align-middle">Profile</span>
-                                    </a>
+                                <a class="dropdown-item" href="pages-pricing.html">
+                                    <i class="bx bx-wallet text-muted fs-18 align-middle me-1"></i><span
+                                        class="align-middle">Pricing</span>
+                                </a>
+                                <a class="dropdown-item" href="pages-faqs.html">
+                                    <i class="bx bx-help-circle text-muted fs-18 align-middle me-1"></i><span
+                                        class="align-middle">Help</span>
+                                </a>
+                                <a class="dropdown-item" href="auth-lock-screen.html">
+                                    <i class="bx bx-lock text-muted fs-18 align-middle me-1"></i><span
+                                        class="align-middle">Lock screen</span>
+                                </a>
 
-                                    <div class="dropdown-divider my-1"></div>
+                                <div class="dropdown-divider my-1"></div>
 
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item text-danger">
-                                            <i class="bx bx-log-out fs-18 align-middle me-1"></i>
-                                            <span class="align-middle">Logout</span>
-                                        </button>
-                                    </form>
-                                </div>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bx bx-log-out fs-18 align-middle me-1"></i>
+                                        <span class="align-middle">Logout</span>
+                                    </button>
+                                </form>
                             </div>
-                        @endif
-
+                        </div>
                         <!-- App Search-->
                         <form class="app-search d-none d-md-block ms-2">
                             <div class="position-relative">
@@ -346,7 +358,6 @@
                                             </div>
                                             <div class="col-lg-4">
                                                 <a href="#!">
-
                                                     <img src="/admin/assets/images/small/img-3.jpg" alt=""
                                                         class="img-fluid rounded">
                                                 </a>
@@ -538,7 +549,6 @@
                 <a href="dasboard" class="logo-light">
                     <img src="/admin/assets/images/logo-sm.png" class="logo-sm" alt="logo sm">
                     <img src="/admin/assets/images/logo-light.png" class="logo-lg" alt="logo light">
-
                 </a>
             </div>
 
@@ -591,7 +601,6 @@
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
                                     <a class="sub-nav-link" href="{{ route('category-list') }}">Danh sách</a>
-
                                 </li>
                             </ul>
                         </div>
@@ -614,7 +623,6 @@
                         </div>
                     </li>
                     <li class="nav-item">
-
                         <a class="nav-link menu-arrow" href="#sidebarInventory" data-bs-toggle="collapse"
                             role="button" aria-expanded="false" aria-controls="sidebarInventory">
                             <span class="nav-icon">
@@ -715,7 +723,7 @@
                         <div class="collapse" id="sidebarInvoice">
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="{{route('invoices.index')}}">List</a>
+                                  <a class="sub-nav-link" href="{{route('invoices.index')}}">List</a>
                                 </li>
                             </ul>
                         </div>

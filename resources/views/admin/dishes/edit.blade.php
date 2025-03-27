@@ -157,8 +157,6 @@
             </div>
         </div>
     </div>
-
-
     <script>
         // Hiển thị ảnh xem trước khi chọn file
         document.getElementById("image").addEventListener("change", function(event) {
@@ -175,3 +173,4 @@
         });
     </script>
 @endsection
+

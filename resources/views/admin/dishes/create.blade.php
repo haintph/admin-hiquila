@@ -1,7 +1,6 @@
 @extends('admin.layouts.master')
 
 @section('content')
-   
         <div class="container-xxl">
             <div class="row">
                 <div class="col-lg-12">
@@ -120,5 +119,4 @@
                 }
             }
         </script>
-    
 @endsection
