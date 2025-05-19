@@ -9,10 +9,15 @@ class InvoiceDetail extends Model
 {
     use HasFactory;
     protected $primaryKey = 'detail_id';
-    protected $fillable = ['invoice_id', 'dish_id', 'quantity', 'price'];
+    protected $fillable = ['invoice_id', 'dish_id', 'variant_id', 'quantity', 'price'];
 
     public function dish()
     {
         return $this->belongsTo(Dish::class, 'dish_id', 'id');
+    }
+    
+    public function variant()
+    {
+        return $this->belongsTo(DishVariant::class, 'variant_id', 'id');
     }
 }

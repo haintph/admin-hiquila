@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 
 @section('content')
-    <div class="page-content">
+    
         <div class="container-xxl">
             <div class="row">
                 <div class="col-xl-3 col-lg-4">
@@ -36,12 +36,12 @@
                     </div>
 
                     <button type="submit" class="btn btn-success">Thêm</button>
-                    <a href="{{ route('dish_detail', $dish->id) }}" class="btn btn-secondary">Quay lại</a>
+                    <a href="{{ route('variant_list' ) }}" class="btn btn-secondary">Quay lại</a>
                 </form>
 
                 <div class="col-xl-9 col-lg-8">
                 </div>
             </div>
         </div>
-    </div>
+    
 @endsection

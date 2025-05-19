@@ -693,7 +693,7 @@
                         </div>
                     </li>
 
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link menu-arrow" href="#sidebarOrders" data-bs-toggle="collapse"
                             role="button" aria-expanded="false" aria-controls="sidebarOrders">
                             <span class="nav-icon">
@@ -718,7 +718,7 @@
                                 </li>
                             </ul>
                         </div>
-                    </li>
+                    </li> --}}
 
                     <li class="nav-item">
                         <a class="nav-link menu-arrow" href="#sidebarPurchases" data-bs-toggle="collapse"
@@ -765,9 +765,9 @@
                         <a class="nav-link menu-arrow" href="#sidebarInvoice" data-bs-toggle="collapse"
                             role="button" aria-expanded="false" aria-controls="sidebarInvoice">
                             <span class="nav-icon">
-                                <iconify-icon icon="solar:bill-list-bold-duotone"></iconify-icon>
+                                 <iconify-icon icon="solar:bag-smile-bold-duotone"></iconify-icon>
                             </span>
-                            <span class="nav-text"> Invoices </span>
+                            <span class="nav-text"> Orders </span>
                         </a>
                         <div class="collapse" id="sidebarInvoice">
                             <ul class="nav sub-navbar-nav">

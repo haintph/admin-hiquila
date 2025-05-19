@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 
 @section('content')
-<div class="page-content">
+
     <div class="container-xxl">
         <!-- Tiêu đề trang -->
         <div class="row mb-4">
@@ -143,5 +143,5 @@
             </div>
         </footer>
     </div>
-</div>
+
 @endsection

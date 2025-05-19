@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -111,5 +112,16 @@ class CategoryController extends Controller
 
         // Chuyển hướng về trang danh sách và thông báo thành công
         return redirect()->route('category-list')->with('success', 'Đã xóa thành công!');
+    }
+    /**
+     * Lấy danh sách danh mục con của một danh mục.
+     */
+    public function getSubcategories($category_id)
+    {
+        $subcategories = SubCategory::where('parent_id', $category_id)->get();
+        
+        return response()->json([
+            'subcategories' => $subcategories
+        ]);
     }
 }

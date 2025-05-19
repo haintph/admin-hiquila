@@ -16,7 +16,9 @@ class UserController extends Controller
     //     $users = User::query()->latest('id')->paginate(10);
     //     return view('admin.users.list', compact('users'));
     // }
-
+    public function create() {
+        return view('admin.users.create');
+    }
     public function list(Request $request)
     {
         $query = User::query();

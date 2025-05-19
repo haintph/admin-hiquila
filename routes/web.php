@@ -16,8 +16,14 @@ use App\Http\Controllers\VnpayController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\AreaOperatingHourController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\InventoryPurchaseController;
+use App\Http\Controllers\InventoryLogController;
+use App\Http\Controllers\StaffController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,7 +59,7 @@ Route::prefix('chat')->name('chat.')->middleware(['auth'])->group(function () {
     Route::post('/mark-as-read', [ChatController::class, 'markAsRead'])->name('markAsRead');
     Route::delete('/message/{message}', [ChatController::class, 'deleteMessage'])->name('deleteMessage');
     Route::post('/reaction', [ChatController::class, 'addReaction'])->name('addReaction');
-    
+
     // Online status management
     Route::get('/update-status', function () {
         if (Auth::check()) {
@@ -62,7 +68,7 @@ Route::prefix('chat')->name('chat.')->middleware(['auth'])->group(function () {
         }
         return response()->json(['status' => 'updated']);
     })->name('updateStatus');
-    
+
     Route::get('/get-unread-count', [ChatController::class, 'getUnreadCount'])->name('unreadCount');
 });
 
@@ -85,6 +91,24 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('areas', AreaController::class);
         Route::put('/areas/update/{id}', [AreaController::class, 'update'])->name('areas.update');
 
+        Route::get('/admin/areas/{area}/manage-hours', [App\Http\Controllers\AreaOperatingHourController::class, 'manageHours'])
+            ->name('areas.manageHours');
+
+        // Route để cập nhật giờ hoạt động từ form
+        Route::post('/admin/areas/{area}/update-hours', [App\Http\Controllers\AreaOperatingHourController::class, 'updateHours'])
+            ->name('areas.updateHours');
+
+        // Route để cập nhật trạng thái của khu vực dựa trên giờ hoạt động
+        Route::get('/admin/areas/update-statuses', [App\Http\Controllers\AreaOperatingHourController::class, 'updateAreaStatuses'])
+            ->name('areas.updateAreaStatuses');
+
+        // Thêm routes mới cho thêm/xóa khung giờ trực tiếp
+        Route::get('/admin/areas/{area}/add-time-slot', [App\Http\Controllers\AreaOperatingHourController::class, 'addTimeSlot'])
+            ->name('areas.addTimeSlot');
+
+        Route::get('/admin/areas/{area}/remove-time-slot/{timeSlotId}', [App\Http\Controllers\AreaOperatingHourController::class, 'removeTimeSlot'])
+            ->name('areas.removeTimeSlot');
+
         //Quản lý bàn 
         Route::resource('tables', TableController::class);
 
@@ -104,12 +128,21 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/invoices/{id}/checkout', [InvoiceController::class, 'checkout'])->name('invoices.checkout');
         Route::get('/invoices/{id}/payment', [InvoiceController::class, 'payment'])->name('invoices.payment');
         Route::get('/invoices/{id}/confirm-payment', [InvoiceController::class, 'confirmPayment'])->name('invoices.confirmPayment');
-
+        Route::post('/invoices/{id}/add-dish-with-variant', [InvoiceController::class, 'addDishWithVariant'])->name('invoices.addDishWithVariant');
         // Xóa hóa đơn
         Route::delete('/invoices/{id}/delete', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
         // In hóa đơn
         Route::get('/invoices/{id}/print', [InvoiceController::class, 'print'])->name('invoices.print');
+        // Route lấy danh mục con
+        Route::get('/get-subcategories/{category_id}', [App\Http\Controllers\CategoryController::class, 'getSubcategories'])->name('categories.subcategories');
+        // Thêm các route cho tăng/giảm số lượng
+        Route::post('invoices/{id}/increase-item', [InvoiceController::class, 'increaseItem'])->name('invoices.increaseItem');
+        Route::post('invoices/{id}/decrease-item', [InvoiceController::class, 'decreaseItem'])->name('invoices.decreaseItem');
+        // Route cập nhật số lượng món trong hóa đơn
+        Route::put('/invoices/{invoice_id}/items/{item_id}/update-quantity', [App\Http\Controllers\InvoiceController::class, 'updateQuantity'])->name('invoices.updateQuantity');
 
+        // Route xóa món khỏi hóa đơn
+        Route::delete('/invoices/{invoice_id}/items/{item_id}/remove', [App\Http\Controllers\InvoiceController::class, 'removeItem'])->name('invoices.removeItem');
         // Category management
         Route::get('category-list', [CategoryController::class, 'list'])->name('category-list');
         Route::get('category-create', [CategoryController::class, 'create'])->name('category-create');
@@ -119,7 +152,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/destroy/{id}', [CategoryController::class, 'destroy'])->name('destroy');
         Route::get('category_detail/{id}', [CategoryController::class, 'detail'])->name('category_detail');
 
-        // 🌟 Quản lý danh mục con (sub_categories)
+        // Quản lý danh mục con (sub_categories)
 
         Route::get('sub_category_list', [SubCategoryController::class, 'list'])->name('sub_category_list');
         Route::get('sub_category_create', [SubCategoryController::class, 'create'])->name('sub_category_create');
@@ -129,7 +162,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('sub_category_destroy/{id}', [SubCategoryController::class, 'destroy'])->name('sub_category_destroy');
         Route::get('sub_category_detail/{id}', [SubCategoryController::class, 'detail'])->name('sub_category_detail');
 
-        // 🌟 Quản lý món ăn ( dishes)
+        // Quản lý món ăn ( dishes)
         Route::get('dish_list', [DishController::class, 'list'])->name('dish_list');
         Route::get('dish_create', [DishController::class, 'create'])->name('dish_create');
         Route::post('dish_store', [DishController::class, 'store'])->name('dish_store');
@@ -140,12 +173,15 @@ Route::middleware(['auth'])->group(function () {
         //search món ăn
         Route::get('/search-dishes', [DishController::class, 'search'])->name('dishes.search');
 
-        //vảiant
         // Route::get('/dishes/{id}', [DishController::class, 'show'])->name('dishes.show');
         Route::get('/dish_detail/show/{id}', [DishController::class, 'show'])->name('dish_detail');
-        Route::get('/variants/edit/{id}', [DishVariantController::class, 'edit'])->name('variants.edit');
+        //vảiant
+        Route::get('variants', [DishVariantController::class, 'list'])->name('variant_list');
         Route::get('/variants/create/{dish_id}', [DishVariantController::class, 'create'])->name('variants.create');
+        Route::get('/variants/edit/{id}', [DishVariantController::class, 'edit'])->name('variants.edit');
+        Route::put('/variants/update/{id}', [DishVariantController::class, 'update'])->name('variants.update');
         Route::post('/variants/store', [DishVariantController::class, 'store'])->name('variants.store');
+        Route::delete('/variants/destroy/{id}', [DishVariantController::class, 'destroy'])->name('variants.destroy');
         // Route::get('dish_detail/{id}', [DishController::class, 'detail'])->name('dish_detail');
 
         //ablum ảnh
@@ -153,14 +189,20 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/dishes/{dish}/upload-images', [DishImageController::class, 'store'])->name('dishes.upload_images');
         Route::delete('/dish/image/delete/{id}', [DishController::class, 'deleteImage'])->name('dish_image_delete');
 
-         // 🌟 Quản lý người dùng (users)
-         Route::get('user_list', [UserController::class, 'list'])->name('user_list');
-         Route::get('user_create', [UserController::class, 'create'])->name('user_create');
-         Route::post('user_store', [UserController::class, 'store'])->name('user_store');
-         Route::get('user_edit/{id}', [UserController::class, 'edit'])->name('user_edit');
-         Route::put('user_update/{id}', [UserController::class, 'update'])->name('user_update');
-         Route::delete('user_destroy/{id}', [UserController::class, 'destroy'])->name('user_destroy');
-         Route::get('user_detail/{id}', [UserController::class, 'detail'])->name('user_detail');
+        // Quản lý người dùng (users)
+        Route::get('user_list', [UserController::class, 'list'])->name('user_list');
+        Route::get('user_create', [UserController::class, 'create'])->name('user_create');
+        Route::post('user_store', [UserController::class, 'store'])->name('user_store');
+        Route::get('user_edit/{id}', [UserController::class, 'edit'])->name('user_edit');
+        Route::put('user_update/{id}', [UserController::class, 'update'])->name('user_update');
+        Route::delete('user_destroy/{id}', [UserController::class, 'destroy'])->name('user_destroy');
+        Route::get('user_detail/{id}', [UserController::class, 'detail'])->name('user_detail');
+        //Quản lý kho
+        Route::resource('inventory', InventoryController::class);
+        Route::resource('supplier', SupplierController::class);
+        Route::resource('purchase', InventoryPurchaseController::class);
+        //Lịch sử nhập - xuất
+        Route::resource('inventory_logs', InventoryLogController::class);
     });
     // Trang dành cho Quản lý
     Route::middleware(['role:manager'])->group(function () {
@@ -170,6 +212,6 @@ Route::middleware(['auth'])->group(function () {
     });
     // Trang dành cho Nhân viên
     Route::middleware(['role:staff'])->group(function () {
-        Route::get('/staff', [AdminController::class, 'index'])->name('staff.dashboard');
+        Route::get('/staff', [StaffController::class, 'index'])->name('staff.dashboard');
     });
 });
