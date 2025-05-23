@@ -1,4 +1,5 @@
 @extends('admin.layouts.master')
+
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -83,6 +84,7 @@
         });
     </script>
 @endsection
+
 @section('styles')
     <style>
         .time-slot-item {
@@ -118,8 +120,23 @@
         .hours-column:hover {
             background-color: rgba(13, 110, 253, 0.05);
         }
+
+        .surcharge-badge {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .capacity-info {
+            font-size: 0.9rem;
+        }
+
+        .floor-badge {
+            min-width: 35px;
+            text-align: center;
+        }
     </style>
 @endsection
+
 @section('content')
     <div class="container-xxl">
         <div class="row">
@@ -127,12 +144,19 @@
                 <!-- Hiển thị lỗi từ Laravel Validator -->
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>Lỗi!</strong> Vui lòng kiểm tra lại thông tin.
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
+                        <div class="d-flex">
+                            <div class="me-2">
+                                <iconify-icon icon="solar:danger-triangle-bold" style="font-size: 24px;"></iconify-icon>
+                            </div>
+                            <div>
+                                <strong>Lỗi!</strong> Vui lòng kiểm tra lại thông tin.
+                                <ul class="mb-0 mt-1">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
@@ -140,21 +164,42 @@
                 <!-- Hiển thị thông báo từ session -->
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <strong>Thành công!</strong> {{ session('success') }}
+                        <div class="d-flex">
+                            <div class="me-2">
+                                <iconify-icon icon="solar:check-circle-bold" style="font-size: 24px;"></iconify-icon>
+                            </div>
+                            <div>
+                                <strong>Thành công!</strong> {{ session('success') }}
+                            </div>
+                        </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
 
                 @if (session('error'))
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>Lỗi!</strong> {{ session('error') }}
+                        <div class="d-flex">
+                            <div class="me-2">
+                                <iconify-icon icon="solar:danger-triangle-bold" style="font-size: 24px;"></iconify-icon>
+                            </div>
+                            <div>
+                                <strong>Lỗi!</strong> {{ session('error') }}
+                            </div>
+                        </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
 
                 @if (session('warning'))
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <strong>Cảnh báo!</strong> {{ session('warning') }}
+                        <div class="d-flex">
+                            <div class="me-2">
+                                <iconify-icon icon="solar:info-circle-bold" style="font-size: 24px;"></iconify-icon>
+                            </div>
+                            <div>
+                                <strong>Cảnh báo!</strong> {{ session('warning') }}
+                            </div>
+                        </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
@@ -162,9 +207,18 @@
                 <!-- Hiển thị lỗi database nếu có -->
                 @if (session('db_error'))
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        <strong>Lỗi cơ sở dữ liệu!</strong> {{ session('db_error') }}
-                        <div class="mt-2">
-                            <small class="text-muted">{{ session('db_error_details') }}</small>
+                        <div class="d-flex">
+                            <div class="me-2">
+                                <iconify-icon icon="solar:database-broken" style="font-size: 24px;"></iconify-icon>
+                            </div>
+                            <div>
+                                <strong>Lỗi cơ sở dữ liệu!</strong> {{ session('db_error') }}
+                                @if(session('db_error_details'))
+                                    <div class="mt-2">
+                                        <small class="text-muted">{{ session('db_error_details') }}</small>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
@@ -173,8 +227,17 @@
                 <div class="card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center py-3">
                         <div>
-                            <h4 class="card-title mb-0">Danh Sách Khu Vực</h4>
-                            <p class="text-muted mb-0 small">Thời gian hiện tại: {{ $currentTime ?? now()->format('H:i') }}
+                            <h4 class="card-title mb-0">
+                                <iconify-icon icon="solar:buildings-2-broken" class="me-2"></iconify-icon>
+                                Danh Sách Khu Vực
+                            </h4>
+                            <p class="text-muted mb-0 small">
+                                <iconify-icon icon="solar:clock-circle-broken" class="me-1"></iconify-icon>
+                                Thời gian hiện tại: {{ $currentTime ?? now()->format('H:i') }}
+                                <span class="ms-3">
+                                    <iconify-icon icon="solar:home-broken" class="me-1"></iconify-icon>
+                                    Tổng: {{ $areas->total() ?? $areas->count() }} khu vực
+                                </span>
                             </p>
                         </div>
                         <div class="d-flex gap-2">
@@ -204,15 +267,15 @@
                                             </th>
                                         @endif
                                         <th scope="col" class="px-3">ID</th>
-                                        <th scope="col">Mã KV</th>
+                                        <th scope="col">Mã / Tầng</th>
                                         <th scope="col">Tên Khu Vực</th>
                                         <th scope="col">Ảnh</th>
+                                        <th scope="col">Sức chứa</th>
                                         <th scope="col">Số Bàn</th>
                                         <th scope="col">Trạng Thái</th>
                                         <th scope="col">Giờ hoạt động</th>
-                                        <th scope="col">VIP</th>
-                                        <th scope="col">Hút Thuốc</th>
-                                        <th scope="col">Tầng</th>
+                                        <th scope="col">Phụ thu</th>
+                                        <th scope="col">Tính năng</th>
                                         <th scope="col" class="text-end pe-3">Hành Động</th>
                                     </tr>
                                 </thead>
@@ -220,7 +283,7 @@
                                     @forelse ($areas as $area)
                                         @php
                                             // Lấy trạng thái hiện tại
-                                            $currentStatus = $area->current_status;
+                                            $currentStatus = $area->current_status ?? $area->status;
 
                                             // Kiểm tra xem khu vực có đang hoạt động theo giờ không
                                             $isInOperatingHours = true; // Mặc định là trong giờ hoạt động
@@ -250,33 +313,60 @@
                                                     </div>
                                                 </td>
                                             @endif
-                                            <td class="px-3">{{ $area->area_id }}</td>
-                                            <td>
-                                                <span class="badge bg-primary-subtle text-primary">
-                                                    {{ $area->code ?? 'N/A' }}
-                                                </span>
+                                            <td class="px-3">
+                                                <span class="text-muted small">#{{ $area->area_id }}</span>
                                             </td>
-                                            <td>{{ $area->name }}</td>
                                             <td>
-                                                <div
-                                                    class="rounded bg-light avatar-md d-flex align-items-center justify-content-center">
-                                                    @if ($area->image && Storage::disk('public')->exists($area->image))
-                                                        <img src="{{ asset('storage/' . $area->image) }}"
-                                                            alt="{{ $area->name }}" class="avatar-md">
-                                                    @else
-                                                        <iconify-icon icon="solar:map-point-cafe-broken"
-                                                            class="fs-24"></iconify-icon>
+                                                <div class="d-flex align-items-center">
+                                                    <span class="badge bg-primary-subtle text-primary me-2">
+                                                        {{ $area->code ?? 'N/A' }}
+                                                    </span>
+                                                    @if($area->floor)
+                                                        <span class="badge bg-secondary-subtle text-secondary floor-badge">
+                                                            T{{ $area->floor }}
+                                                        </span>
                                                     @endif
                                                 </div>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <strong>{{ $area->name }}</strong>
+                                                    @if($area->description)
+                                                        <div class="small text-muted">{{ Str::limit($area->description, 50) }}</div>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="rounded bg-light avatar-md d-flex align-items-center justify-content-center">
+                                                    @if ($area->image && Storage::disk('public')->exists($area->image))
+                                                        <img src="{{ asset('storage/' . $area->image) }}"
+                                                            alt="{{ $area->name }}" class="avatar-md rounded">
+                                                    @else
+                                                        <iconify-icon icon="solar:map-point-cafe-broken"
+                                                            class="fs-24 text-muted"></iconify-icon>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if($area->capacity)
+                                                    <span class="capacity-info">
+                                                        <iconify-icon icon="solar:users-group-rounded-broken" class="me-1 text-muted"></iconify-icon>
+                                                        <strong>{{ $area->capacity }}</strong> người
+                                                    </span>
+                                                @else
+                                                    <span class="text-muted small">Chưa xác định</span>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if (Route::has('areas.show'))
                                                     <a href="{{ route('areas.show', $area->area_id) }}"
                                                         class="btn btn-sm btn-soft-info">
+                                                        <iconify-icon icon="solar:table-2-broken" class="me-1"></iconify-icon>
                                                         {{ $area->tables_count ?? 0 }} bàn
                                                     </a>
                                                 @else
                                                     <span class="badge bg-info-subtle text-info">
+                                                        <iconify-icon icon="solar:table-2-broken" class="me-1"></iconify-icon>
                                                         {{ $area->tables_count ?? 0 }} bàn
                                                     </span>
                                                 @endif
@@ -299,7 +389,7 @@
                                                     <div class="d-flex align-items-center">
                                                         <span
                                                             class="status-indicator {{ $isInOperatingHours ? 'status-active' : 'status-inactive' }}"></span>
-                                                        <span>
+                                                        <span class="small">
                                                             {{ $area->operatingHours->count() }} khung giờ
                                                             <iconify-icon icon="solar:pen-2-linear"
                                                                 class="fs-12 ms-1"></iconify-icon>
@@ -314,27 +404,41 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($area->is_vip)
-                                                    <span class="badge bg-warning-subtle text-warning">Có</span>
+                                                @if($area->surcharge && $area->surcharge > 0)
+                                                    <span class="badge bg-warning-subtle text-warning surcharge-badge">
+                                                        <iconify-icon icon="solar:dollar-minimalistic-broken" class="me-1"></iconify-icon>
+                                                        {{ number_format($area->surcharge, 0, ',', '.') }}đ
+                                                    </span>
                                                 @else
-                                                    <span class="text-muted">Không</span>
+                                                    <span class="text-muted small">Miễn phí</span>
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($area->is_smoking)
-                                                    <span class="badge bg-secondary-subtle text-secondary">Có</span>
-                                                @else
-                                                    <span class="text-muted">Không</span>
-                                                @endif
+                                                <div class="d-flex gap-1">
+                                                    @if ($area->is_vip)
+                                                        <span class="badge bg-warning-subtle text-warning" title="Khu VIP">
+                                                            <iconify-icon icon="solar:crown-broken" class="me-1"></iconify-icon>
+                                                            VIP
+                                                        </span>
+                                                    @endif
+                                                    @if ($area->is_smoking)
+                                                        <span class="badge bg-secondary-subtle text-secondary" title="Cho phép hút thuốc">
+                                                            <iconify-icon icon="solar:smoking-broken" class="me-1"></iconify-icon>
+                                                            Hút thuốc
+                                                        </span>
+                                                    @endif
+                                                    @if (!$area->is_vip && !$area->is_smoking)
+                                                        <span class="text-muted small">-</span>
+                                                    @endif
+                                                </div>
                                             </td>
-                                            <td>{{ $area->floor ?? 'N/A' }}</td>
                                             <td class="text-end pe-3">
-                                                <div class="d-flex gap-2 justify-content-end">
+                                                <div class="d-flex gap-1 justify-content-end">
                                                     @if (Route::has('areas.show'))
                                                         <a href="{{ route('areas.show', $area->area_id) }}"
                                                             class="btn btn-soft-info btn-sm" title="Xem chi tiết">
                                                             <iconify-icon icon="solar:eye-broken"
-                                                                class="align-middle fs-18"></iconify-icon>
+                                                                class="align-middle fs-16"></iconify-icon>
                                                         </a>
                                                     @endif
 
@@ -343,7 +447,7 @@
                                                             class="btn btn-soft-secondary btn-sm"
                                                             title="Quản lý giờ hoạt động">
                                                             <iconify-icon icon="solar:clock-circle-broken"
-                                                                class="align-middle fs-18"></iconify-icon>
+                                                                class="align-middle fs-16"></iconify-icon>
                                                         </a>
                                                     @endif
 
@@ -352,14 +456,14 @@
                                                             class="btn btn-soft-success btn-sm"
                                                             title="Quản lý bố trí bàn">
                                                             <iconify-icon icon="solar:table-broken"
-                                                                class="align-middle fs-18"></iconify-icon>
+                                                                class="align-middle fs-16"></iconify-icon>
                                                         </a>
                                                     @endif
 
                                                     <a href="{{ route('areas.edit', $area->area_id) }}"
                                                         class="btn btn-soft-primary btn-sm" title="Chỉnh sửa">
                                                         <iconify-icon icon="solar:pen-2-broken"
-                                                            class="align-middle fs-18"></iconify-icon>
+                                                            class="align-middle fs-16"></iconify-icon>
                                                     </a>
 
                                                     <form action="{{ route('areas.destroy', $area->area_id) }}"
@@ -370,7 +474,7 @@
                                                         <button type="submit" class="btn btn-soft-danger btn-sm"
                                                             title="Xóa">
                                                             <iconify-icon icon="solar:trash-bin-minimalistic-2-broken"
-                                                                class="align-middle fs-18"></iconify-icon>
+                                                                class="align-middle fs-16"></iconify-icon>
                                                         </button>
                                                     </form>
                                                 </div>
@@ -379,14 +483,18 @@
                                     @empty
                                         <tr>
                                             <td colspan="{{ Route::has('areas.bulkDelete') ? 12 : 11 }}"
-                                                class="text-center py-4">
-                                                <div class="text-muted">Chưa có khu vực nào được tạo</div>
-                                                <a href="{{ route('areas.create') }}"
-                                                    class="btn btn-sm btn-primary mt-3">
-                                                    <iconify-icon icon="solar:add-circle-broken"
-                                                        class="me-1"></iconify-icon>
-                                                    Thêm khu vực đầu tiên
-                                                </a>
+                                                class="text-center py-5">
+                                                <div class="text-center">
+                                                    <iconify-icon icon="solar:buildings-2-broken" class="fs-48 text-muted mb-3"></iconify-icon>
+                                                    <h5 class="text-muted">Chưa có khu vực nào</h5>
+                                                    <p class="text-muted mb-3">Bắt đầu bằng cách tạo khu vực đầu tiên cho nhà hàng</p>
+                                                    <a href="{{ route('areas.create') }}"
+                                                        class="btn btn-primary">
+                                                        <iconify-icon icon="solar:add-circle-broken"
+                                                            class="me-1"></iconify-icon>
+                                                        Thêm khu vực đầu tiên
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforelse
@@ -396,7 +504,7 @@
                     </div>
                     @if ($areas->count() > 0)
                         <div class="card-footer d-flex justify-content-between align-items-center border-top py-3">
-                            <div>
+                            <div class="d-flex gap-2">
                                 @if (Route::has('areas.bulkDelete'))
                                     <form action="{{ route('areas.bulkDelete') }}" method="POST" id="bulkDeleteForm"
                                         class="d-inline">
@@ -411,7 +519,7 @@
 
                                 @if (Route::has('areas.deleteInactiveEmpty'))
                                     <a href="{{ route('areas.deleteInactiveEmpty') }}"
-                                        class="btn btn-sm btn-warning ms-2"
+                                        class="btn btn-sm btn-warning"
                                         onclick="return confirm('Bạn có chắc chắn muốn xóa tất cả khu vực không hoạt động và trống?')">
                                         <iconify-icon icon="solar:trash-bin-minimalistic-broken"
                                             class="me-1"></iconify-icon>
@@ -468,7 +576,7 @@
                 aria-atomic="true">
                 <div class="toast-header bg-warning-subtle text-warning">
                     <strong class="me-auto">
-                        <iconify-icon icon="solar:danger-triangle-broken" class="me-1"></iconify-icon>
+                        <iconify-icon icon="solar:info-circle-broken" class="me-1"></iconify-icon>
                         Cảnh báo
                     </strong>
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>

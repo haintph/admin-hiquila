@@ -1,4 +1,3 @@
-
 @php
 // Kiểm tra xem đây là form tạo mới hay chỉnh sửa
 $isEdit = isset($area);
@@ -39,6 +38,29 @@ $isEdit = isset($area);
     
     .table-card:hover {
         box-shadow: 0 .25rem .5rem rgba(0,0,0,.1);
+    }
+
+    .area-rules {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .rule-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .rule-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .rule-icon {
+        margin-right: 0.5rem;
+        opacity: 0.8;
     }
 </style>
 @endsection
@@ -103,6 +125,32 @@ $isEdit = isset($area);
         </div>
         @endif
 
+        <!-- Quy tắc tạo khu vực -->
+        @if(!$isEdit)
+        <div class="area-rules">
+            <h6 class="mb-3">
+                <iconify-icon icon="solar:info-circle-bold" class="me-2"></iconify-icon>
+                Quy tắc tạo khu vực
+            </h6>
+            <div class="rule-item">
+                <iconify-icon icon="solar:buildings-2-broken" class="rule-icon"></iconify-icon>
+                <span>Tối đa 3 tầng (Tầng 1, 2, 3)</span>
+            </div>
+            <div class="rule-item">
+                <iconify-icon icon="solar:sort-horizontal-broken" class="rule-icon"></iconify-icon>
+                <span>Mỗi tầng phải tạo khu A trước, rồi mới đến B, C...</span>
+            </div>
+            <div class="rule-item">
+                <iconify-icon icon="solar:hashtag-bold" class="rule-icon"></iconify-icon>
+                <span>Mã khu vực: A, B, C... (chỉ một chữ cái)</span>
+            </div>
+            <div class="rule-item">
+                <iconify-icon icon="solar:table-2-broken" class="rule-icon"></iconify-icon>
+                <span>Bàn trong khu: A1, A2, A3... (khu A) | B1, B2, B3... (khu B)</span>
+            </div>
+        </div>
+        @endif
+
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
@@ -114,11 +162,31 @@ $isEdit = isset($area);
                     </div>
                     <div class="card-body">
                         <form action="{{ $isEdit ? route('areas.update', $area->area_id) : route('areas.store') }}" 
-                              method="POST" enctype="multipart/form-data">
+                              method="POST" enctype="multipart/form-data" id="areaForm">
                             @csrf
                             @if($isEdit) @method('PUT') @endif
                             
                             <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Tầng <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text icon-container bg-primary-subtle text-primary">
+                                            <iconify-icon icon="solar:square-top-broken" class="fs-18"></iconify-icon>
+                                        </span>
+                                        <select class="form-select @error('floor') is-invalid @enderror" 
+                                                name="floor" id="floorSelect" required {{ $isEdit ? '' : 'onchange="updateAvailableAreas()"' }}>
+                                            <option value="">Chọn tầng</option>
+                                            <option value="1" {{ old('floor', $area->floor ?? '') == '1' ? 'selected' : '' }}>Tầng 1</option>
+                                            <option value="2" {{ old('floor', $area->floor ?? '') == '2' ? 'selected' : '' }}>Tầng 2</option>
+                                            <option value="3" {{ old('floor', $area->floor ?? '') == '3' ? 'selected' : '' }}>Tầng 3</option>
+                                        </select>
+                                    </div>
+                                    <small class="form-text text-muted">Tối đa 3 tầng</small>
+                                    @error('floor')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Mã khu vực <span class="text-danger">*</span></label>
                                     <div class="input-group">
@@ -126,11 +194,20 @@ $isEdit = isset($area);
                                             <iconify-icon icon="solar:hashtag-bold" class="fs-18"></iconify-icon>
                                         </span>
                                         <input type="text" class="form-control @error('code') is-invalid @enderror" 
-                                               name="code" value="{{ old('code', $area->code ?? '') }}" required
-                                               placeholder="Ví dụ: A, B, C"
-                                               maxlength="10">
+                                               name="code" id="codeInput" value="{{ old('code', $area->code ?? '') }}" required
+                                               placeholder="A, B, C..."
+                                               maxlength="1"
+                                               pattern="[A-Z]"
+                                               style="text-transform: uppercase;"
+                                               {{ $isEdit ? '' : 'oninput="validateAreaCode()"' }}>
                                     </div>
-                                    <small class="form-text text-muted">Mã khu vực dùng để đánh số bàn (ví dụ: A1, A2, B1...)</small>
+                                    <div id="codeHelp" class="form-text text-muted">
+                                        @if(!$isEdit)
+                                            Chọn tầng trước để xem khu vực có thể tạo
+                                        @else
+                                            Mã khu vực (một chữ cái: A, B, C...) - Bàn sẽ có số: A1, A2, A3...
+                                        @endif
+                                    </div>
                                     @error('code')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -147,16 +224,6 @@ $isEdit = isset($area);
                                                placeholder="Nhập tên khu vực" required>
                                     </div>
                                     @error('name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Mô tả</label>
-                                    <textarea class="form-control @error('description') is-invalid @enderror" 
-                                              name="description" rows="2" 
-                                              placeholder="Mô tả ngắn về khu vực">{{ old('description', $area->description ?? '') }}</textarea>
-                                    @error('description')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -179,6 +246,16 @@ $isEdit = isset($area);
                                     @enderror
                                 </div>
 
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Mô tả</label>
+                                    <textarea class="form-control @error('description') is-invalid @enderror" 
+                                              name="description" rows="2" 
+                                              placeholder="Mô tả ngắn về khu vực">{{ old('description', $area->description ?? '') }}</textarea>
+                                    @error('description')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                                 <div class="col-12">
                                     <hr class="text-muted">
                                 </div>
@@ -191,60 +268,12 @@ $isEdit = isset($area);
                                         </span>
                                         <input type="number" class="form-control @error('capacity') is-invalid @enderror" 
                                                name="capacity" value="{{ old('capacity', $area->capacity ?? '') }}" 
-                                               placeholder="Số người tối đa có thể chứa" min="0">
+                                               placeholder="Số người tối đa có thể chứa" min="0" max="20">
                                     </div>
+                                    <small class="form-text text-muted">Tối đa 20 người mỗi khu vực</small>
                                     @error('capacity')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Tầng</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text icon-container bg-primary-subtle text-primary">
-                                            <iconify-icon icon="solar:square-top-broken" class="fs-18"></iconify-icon>
-                                        </span>
-                                        <input type="number" class="form-control @error('floor') is-invalid @enderror" 
-                                               name="floor" value="{{ old('floor', $area->floor ?? '') }}" 
-                                               placeholder="Tầng 1, 2, 3..." min="0">
-                                    </div>
-                                    @error('floor')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Cho phép hút thuốc?</label>
-                                    <select class="form-select @error('is_smoking') is-invalid @enderror" name="is_smoking">
-                                        <option value="0" {{ old('is_smoking', $area->is_smoking ?? 0) == 0 ? 'selected' : '' }}>
-                                            Không
-                                        </option>
-                                        <option value="1" {{ old('is_smoking', $area->is_smoking ?? 0) == 1 ? 'selected' : '' }}>
-                                            Có
-                                        </option>
-                                    </select>
-                                    @error('is_smoking')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Khu VIP?</label>
-                                    <select class="form-select @error('is_vip') is-invalid @enderror" name="is_vip">
-                                        <option value="0" {{ old('is_vip', $area->is_vip ?? 0) == 0 ? 'selected' : '' }}>
-                                            Không
-                                        </option>
-                                        <option value="1" {{ old('is_vip', $area->is_vip ?? 0) == 1 ? 'selected' : '' }}>
-                                            Có
-                                        </option>
-                                    </select>
-                                    @error('is_vip')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="col-12">
-                                    <hr class="text-muted">
                                 </div>
 
                                 <div class="col-md-6 mb-3">
@@ -264,6 +293,42 @@ $isEdit = isset($area);
                                 </div>
 
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label">Cho phép hút thuốc? <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('is_smoking') is-invalid @enderror" name="is_smoking" required>
+                                        <option value="">-- Chọn --</option>
+                                        <option value="0" {{ old('is_smoking', $area->is_smoking ?? '') === '0' || old('is_smoking', $area->is_smoking ?? '') === 0 ? 'selected' : '' }}>
+                                            Không
+                                        </option>
+                                        <option value="1" {{ old('is_smoking', $area->is_smoking ?? '') === '1' || old('is_smoking', $area->is_smoking ?? '') === 1 ? 'selected' : '' }}>
+                                            Có
+                                        </option>
+                                    </select>
+                                    @error('is_smoking')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Khu VIP? <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('is_vip') is-invalid @enderror" name="is_vip" required>
+                                        <option value="">-- Chọn --</option>
+                                        <option value="0" {{ old('is_vip', $area->is_vip ?? '') === '0' || old('is_vip', $area->is_vip ?? '') === 0 ? 'selected' : '' }}>
+                                            Không
+                                        </option>
+                                        <option value="1" {{ old('is_vip', $area->is_vip ?? '') === '1' || old('is_vip', $area->is_vip ?? '') === 1 ? 'selected' : '' }}>
+                                            Có
+                                        </option>
+                                    </select>
+                                    @error('is_vip')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="col-12">
+                                    <hr class="text-muted">
+                                </div>
+
+                                <div class="col-md-12 mb-3">
                                     <label class="form-label">
                                         {{ $isEdit ? 'Hình ảnh hiện tại' : 'Hình ảnh' }}
                                     </label>
@@ -317,7 +382,7 @@ $isEdit = isset($area);
                                     <iconify-icon icon="solar:arrow-left-broken" class="me-1"></iconify-icon> 
                                     Quay lại
                                 </a>
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary" id="submitBtn">
                                     <iconify-icon icon="{{ $isEdit ? 'solar:disk-broken' : 'solar:add-circle-broken' }}" class="me-1"></iconify-icon> 
                                     {{ $isEdit ? 'Lưu Thay Đổi' : 'Thêm Khu Vực' }}
                                 </button>
@@ -379,4 +444,125 @@ $isEdit = isset($area);
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+@if(!$isEdit)
+<script>
+let floorAreaData = {};
+
+// Cập nhật khu vực có thể tạo khi chọn tầng
+function updateAvailableAreas() {
+    const floor = document.getElementById('floorSelect').value;
+    const codeInput = document.getElementById('codeInput');
+    const codeHelp = document.getElementById('codeHelp');
+    
+    if (!floor) {
+        codeHelp.innerHTML = 'Chọn tầng trước để xem khu vực có thể tạo';
+        codeHelp.className = 'form-text text-muted';
+        codeInput.value = '';
+        return;
+    }
+
+    // Gọi API để lấy thông tin khu vực có thể tạo
+    fetch(`{{ url('/admin/areas/floor') }}/${floor}/available`)
+        .then(response => response.json())
+        .then(data => {
+            floorAreaData[floor] = data;
+            updateCodeHelp(floor, data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            codeHelp.innerHTML = 'Có lỗi xảy ra khi tải thông tin';
+            codeHelp.className = 'form-text text-danger';
+        });
+}
+
+function updateCodeHelp(floor, data) {
+    const codeHelp = document.getElementById('codeHelp');
+    
+    if (!data.can_create) {
+        codeHelp.innerHTML = `<strong>Tầng ${floor} đã đầy!</strong> Không thể tạo thêm khu vực.`;
+        codeHelp.className = 'form-text text-warning';
+        return;
+    }
+
+    let helpText = `<strong>Tầng ${floor}:</strong> `;
+    
+    if (data.existing_areas.length === 0) {
+        helpText += 'Chưa có khu vực nào. Bắt đầu với khu <strong>A</strong>';
+        helpText += '<br><small class="text-muted">Bàn sẽ là: A1, A2, A3...</small>';
+    } else {
+        helpText += `Đã có: ${data.existing_areas.join(', ')}. Tiếp theo có thể tạo: <strong>${data.next_available}</strong>`;
+        if (data.table_format_example) {
+            helpText += `<br><small class="text-muted">Bàn trong khu ${data.next_available}: ${data.table_format_example}</small>`;
+        }
+    }
+    
+    codeHelp.innerHTML = helpText;
+    codeHelp.className = 'form-text text-info';
+}
+
+function validateAreaCode() {
+    const floor = document.getElementById('floorSelect').value;
+    const code = document.getElementById('codeInput').value.trim().toUpperCase();
+    const codeInput = document.getElementById('codeInput');
+    const codeHelp = document.getElementById('codeHelp');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (!floor || !code) {
+        submitBtn.disabled = false;
+        return;
+    }
+
+    // Cập nhật giá trị input
+    codeInput.value = code;
+
+    const data = floorAreaData[floor];
+    if (!data) {
+        return;
+    }
+
+    // Kiểm tra format code - chỉ cho phép một chữ cái
+    const codePattern = /^[A-Z]$/;
+    if (!codePattern.test(code)) {
+        codeHelp.innerHTML = 'Mã khu vực phải là một chữ cái: A, B, C, D...';
+        codeHelp.className = 'form-text text-danger';
+        codeInput.classList.add('is-invalid');
+        submitBtn.disabled = true;
+        return;
+    }
+
+    const areaLetter = code;
+    
+    // Kiểm tra thứ tự
+    if (data.next_available && areaLetter !== data.next_available) {
+        if (data.existing_areas.includes(areaLetter)) {
+            codeHelp.innerHTML = `Khu vực ${areaLetter} đã tồn tại trên tầng ${floor}`;
+            codeHelp.className = 'form-text text-danger';
+        } else {
+            codeHelp.innerHTML = `Phải tạo khu vực ${data.next_available} trước khi tạo khu vực ${areaLetter} trên tầng ${floor}`;
+            codeHelp.className = 'form-text text-danger';
+        }
+        codeInput.classList.add('is-invalid');
+        submitBtn.disabled = true;
+        return;
+    }
+
+    // Hợp lệ
+    codeInput.classList.remove('is-invalid');
+    codeInput.classList.add('is-valid');
+    updateCodeHelp(floor, data);
+    submitBtn.disabled = false;
+}
+
+// Khởi tạo khi trang load
+document.addEventListener('DOMContentLoaded', function() {
+    const floor = document.getElementById('floorSelect').value;
+    if (floor) {
+        updateAvailableAreas();
+    }
+});
+</script>
+@endif
 @endsection

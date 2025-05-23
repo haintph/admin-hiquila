@@ -13,10 +13,10 @@ class DishVariantController extends Controller
         $dishes = Dish::with('variants')
             ->orderByDesc('updated_at') // Sắp xếp theo updated_at của món ăn
             ->paginate(8);
-    
+
         return view('admin.variants.list', compact('dishes'));
     }
-    
+
     /**
      * Thêm một biến thể mới.
      */
@@ -32,15 +32,22 @@ class DishVariantController extends Controller
             'dish_id' => 'required|exists:dishes,id',
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'unit' => 'required|string|max:50',
             'stock' => 'required|integer|min:0',
             'is_available' => 'required|boolean',
         ]);
 
-        DishVariant::create($request->all());
+        DishVariant::create([
+            'dish_id' => $request->dish_id,
+            'name' => $request->name,
+            'price' => $request->price,
+            'unit' => $request->unit,
+            'stock' => $request->stock,
+            'is_available' => $request->is_available,
+        ]);
 
         return redirect()->route('variant_list')->with('success', 'Thêm biến thể thành công!');
     }
-
 
     /**
      * Cập nhật biến thể.
@@ -48,22 +55,29 @@ class DishVariantController extends Controller
     public function update(Request $request, $id)
     {
         $variant = DishVariant::findOrFail($id);
-    
+
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'unit' => 'required|string|max:50',
             'stock' => 'required|integer|min:0',
             'is_available' => 'required|boolean',
         ]);
-    
-        $variant->update($request->all());
-    
+
+        $variant->update([
+            'name' => $request->name,
+            'price' => $request->price,
+            'unit' => $request->unit,
+            'stock' => $request->stock,
+            'is_available' => $request->is_available,
+        ]);
+
         // Cập nhật updated_at của món ăn để thay đổi vị trí trong danh sách
         $variant->dish->touch();
-    
-        return redirect()->route('variant_list', $variant->dish_id)->with('success', 'Cập nhật biến thể thành công!');
+
+        return redirect()->route('variant_list')->with('success', 'Cập nhật biến thể thành công!');
     }
-    
+
     /**
      * Xóa biến thể.
      */
@@ -77,7 +91,8 @@ class DishVariantController extends Controller
 
     public function edit($id)
     {
-        $variant = DishVariant::findOrFail($id);
-        return view('admin.variants.edit', compact('variant'));
+        $variant = DishVariant::with('dish')->findOrFail($id);
+        $dish = $variant->dish; // Lấy thông tin món ăn
+        return view('admin.variants.edit', compact('variant', 'dish'));
     }
 }

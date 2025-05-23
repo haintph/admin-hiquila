@@ -12,7 +12,7 @@ class CreateAreasTable extends Migration
             $table->id('area_id');
             
             // Thông tin cơ bản
-            $table->string('code', 10)->unique()->comment('Mã khu vực (A, B, C)'); 
+            $table->string('code', 10)->comment('Mã khu vực (A, B, C)');
             $table->string('name', 100)->comment('Tên khu vực');
             $table->text('description')->nullable()->comment('Mô tả khu vực');
             
@@ -20,10 +20,10 @@ class CreateAreasTable extends Migration
             $table->enum('status', ['Hoạt động', 'Bảo trì', 'Đóng cửa'])
                   ->default('Hoạt động')
                   ->comment('Trạng thái mặc định khu vực');
-        
+            
             // Thông tin bố trí
             $table->integer('floor')->nullable()->comment('Tầng');
-            $table->integer('capacity')->nullable()->comment('Sức chứa tối đa người');
+            $table->integer('capacity')->nullable()->default(20)->comment('Sức chứa tối đa 20 người');
             
             // Đặc điểm khu vực
             $table->boolean('is_smoking')->default(false)->comment('Khu vực hút thuốc');
@@ -37,6 +37,9 @@ class CreateAreasTable extends Migration
             // Timestamps
             $table->timestamps();
             $table->softDeletes(); // Cho phép xóa mềm thay vì xóa hẳn khu vực
+            
+            // Unique constraint: code + floor (cho phép cùng code ở khác tầng)
+            $table->unique(['code', 'floor'], 'areas_code_floor_unique');
         });
     }
 

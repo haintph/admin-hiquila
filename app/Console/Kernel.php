@@ -12,7 +12,17 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Kiểm tra đến muộn mỗi 5 phút trong giờ hoạt động
+        $schedule->command('tables:check-late')
+                 ->everyFiveMinutes()
+                 ->between('08:00', '23:59')
+                 ->appendOutputTo(storage_path('logs/late-arrivals.log'));
+
+        // Hoặc nếu muốn chạy 24/7:
+        // $schedule->command('tables:check-late')->everyFiveMinutes();
+
+        // Có thể thêm các schedule khác cho dự án:
+        // $schedule->command('tables:cleanup-old-reservations')->daily();
     }
 
     /**

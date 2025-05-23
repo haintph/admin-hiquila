@@ -10,6 +10,7 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
+
         User::create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
@@ -17,7 +18,7 @@ class UserSeeder extends Seeder
             'role' => 'owner'
         ]);
 
-        
+
         User::create([
             'name' => 'Manager',
             'email' => 'manager@gmail.com',
@@ -31,7 +32,19 @@ class UserSeeder extends Seeder
             'password' => Hash::make('123456'),
             'role' => 'staff'
         ]);
+
+        User::create([
+            'name' => 'Chef',
+            'email' => 'chef@gmail.com',
+            'password' => Hash::make('123456'),
+            'role' => 'chef'
+        ]);
+        User::create([
+            'name' => 'Khách hàng test',
+            'email' => 'customer@gmail.com',
+            'password' => bcrypt('123456'),
+            'role' => 'customer'
+        ]);
         // User::factory()->count(5)->create();
     }
 }
-

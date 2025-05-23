@@ -65,7 +65,9 @@ class AuthController extends Controller
         return match ($user->role) {
             'owner' => route('owner.dashboard'), // Trang admin chính
             'manager' => route('manager.dashboard'), // Trang quản lý
-            'staff' => route('staff.dashboard'), // Trang nhân viên
+            'staff' => route('staff.index'),//Trang nhân viên
+             'chef' => route('chef.dashboard'),// Trang đầu bếp
+             'customer' => route('customer.dashboard'),// Trang khách hàng
             default => url('/'), // Redirect về trang chủ nếu không xác định
         };
     }

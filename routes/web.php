@@ -17,12 +17,15 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AreaOperatingHourController;
+use App\Http\Controllers\ChefController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\InventoryPurchaseController;
 use App\Http\Controllers\InventoryLogController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\StaffController;
 
 /*
@@ -84,18 +87,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/paypal/cancel', [PayPalController::class, 'cancel'])->name('paypal.cancel');
         Route::get('/invoices/check-payment/{invoice_id}', [InvoiceController::class, 'checkPayment'])->name('invoices.checkPayment');
 
-        //Thanh toan vnpay
-        Route::get('/vnpay-payment/{invoice_id}', [VnpayController::class, 'createPayment'])->name('vnpay.payment');
-        Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return');
         //Vị trí bố cụccục
         Route::resource('areas', AreaController::class);
         Route::put('/areas/update/{id}', [AreaController::class, 'update'])->name('areas.update');
 
-        Route::get('/admin/areas/{area}/manage-hours', [App\Http\Controllers\AreaOperatingHourController::class, 'manageHours'])
+        Route::get('/admin/areas/{area}/manage-hours', [AreaOperatingHourController::class, 'manageHours'])
             ->name('areas.manageHours');
 
-        // Route để cập nhật giờ hoạt động từ form
-        Route::post('/admin/areas/{area}/update-hours', [App\Http\Controllers\AreaOperatingHourController::class, 'updateHours'])
+        Route::post('/admin/areas/{area}/update-hours', [AreaOperatingHourController::class, 'updateHours'])
             ->name('areas.updateHours');
 
         // Route để cập nhật trạng thái của khu vực dựa trên giờ hoạt động
@@ -112,37 +111,70 @@ Route::middleware(['auth'])->group(function () {
         //Quản lý bàn 
         Route::resource('tables', TableController::class);
 
+        // Quản lý đặt bàn
+        Route::prefix('admin/reservations')->name('admin.reservations.')->group(function () {
+            // Danh sách đặt bàn
+            Route::get('/', [ReservationController::class, 'index'])
+                ->name('index');
+
+            // Chi tiết đặt bàn
+            Route::get('/{tableId}', [ReservationController::class, 'show'])
+                ->name('show');
+
+            // Check-in khách hàng
+            Route::post('/{tableId}/checkin', [ReservationController::class, 'checkin'])
+                ->name('checkin');
+
+            // Hủy đặt bàn
+            Route::delete('/{tableId}/cancel', [ReservationController::class, 'cancel'])
+                ->name('cancel');
+
+            // Tìm kiếm nhanh
+            Route::get('/search/quick', [ReservationController::class, 'quickSearch'])
+                ->name('quick-search');
+        });
         // Danh sách hóa đơn
         Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+
         // Tạo hóa đơn mới
         Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
+        Route::post('/invoices/store', [InvoiceController::class, 'store'])->name('invoices.store');
         Route::get('/get-tables/{area_id}', [InvoiceController::class, 'getTables']);
 
-        Route::post('/invoices/store', [InvoiceController::class, 'store'])->name('invoices.store');
-        // Chỉnh sửa hóa đơn
+        // Chỉnh sửa hóa đơn (order)
         Route::get('/invoices/{id}/edit', [InvoiceController::class, 'edit'])->name('invoices.edit');
         Route::put('/invoices/{invoice_id}/update', [InvoiceController::class, 'update'])->name('invoices.update');
-        //Thêm món ăn
+
+        // Thêm món ăn
         Route::post('/invoices/{id}/add-dish', [InvoiceController::class, 'addDish'])->name('invoices.addDish');
-        //Thanh toán
-        Route::get('/invoices/{id}/checkout', [InvoiceController::class, 'checkout'])->name('invoices.checkout');
-        Route::get('/invoices/{id}/payment', [InvoiceController::class, 'payment'])->name('invoices.payment');
-        Route::get('/invoices/{id}/confirm-payment', [InvoiceController::class, 'confirmPayment'])->name('invoices.confirmPayment');
         Route::post('/invoices/{id}/add-dish-with-variant', [InvoiceController::class, 'addDishWithVariant'])->name('invoices.addDishWithVariant');
-        // Xóa hóa đơn
-        Route::delete('/invoices/{id}/delete', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
-        // In hóa đơn
-        Route::get('/invoices/{id}/print', [InvoiceController::class, 'print'])->name('invoices.print');
-        // Route lấy danh mục con
-        Route::get('/get-subcategories/{category_id}', [App\Http\Controllers\CategoryController::class, 'getSubcategories'])->name('categories.subcategories');
-        // Thêm các route cho tăng/giảm số lượng
+
+        // Quản lý số lượng món
         Route::post('invoices/{id}/increase-item', [InvoiceController::class, 'increaseItem'])->name('invoices.increaseItem');
         Route::post('invoices/{id}/decrease-item', [InvoiceController::class, 'decreaseItem'])->name('invoices.decreaseItem');
-        // Route cập nhật số lượng món trong hóa đơn
-        Route::put('/invoices/{invoice_id}/items/{item_id}/update-quantity', [App\Http\Controllers\InvoiceController::class, 'updateQuantity'])->name('invoices.updateQuantity');
+        Route::delete('/invoices/{invoice_id}/items/{item_id}/remove', [InvoiceController::class, 'removeItem'])->name('invoices.removeItem');
+        Route::put('/invoices/{invoice_id}/items/{item_id}/update-quantity', [InvoiceController::class, 'updateQuantity'])->name('invoices.updateQuantity');
 
-        // Route xóa món khỏi hóa đơn
-        Route::delete('/invoices/{invoice_id}/items/{item_id}/remove', [App\Http\Controllers\InvoiceController::class, 'removeItem'])->name('invoices.removeItem');
+        // Gửi đến bếp
+        Route::post('/invoices/{invoice}/send-to-kitchen', [InvoiceController::class, 'sendToKitchen'])->name('invoices.sendToKitchen');
+
+        // THANH TOÁN - SỬA ĐỂ TRÁNH CONFLICT
+        Route::get('/invoices/{id}/payment', [InvoiceController::class, 'payment'])->name('invoices.payment');
+        Route::post('/invoices/{id}/checkout', [InvoiceController::class, 'checkout'])->name('invoices.checkout');  // Đổi thành POST
+        Route::post('/invoices/{id}/confirm-payment', [InvoiceController::class, 'confirmPayment'])->name('invoices.confirmPayment');
+
+        // HOÀN TẤT VÀ DỌN BÀN - SỬA ĐƯỜNG DẪN
+        Route::patch('/invoices/{id}/finish', [InvoiceController::class, 'finishAndCleanTable'])->name('invoices.finish');
+        Route::patch('/invoices/{id}/quick-clean', [InvoiceController::class, 'quickClean'])->name('invoices.quick-clean');
+
+        // In hóa đơn
+        Route::get('/invoices/{id}/print', [InvoiceController::class, 'print'])->name('invoices.print');
+
+        // Kiểm tra thanh toán
+        Route::get('/invoices/check-payment/{invoice_id}', [InvoiceController::class, 'checkPayment'])->name('invoices.checkPayment');
+
+        // Xóa hóa đơn
+        Route::delete('/invoices/{id}/delete', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
         // Category management
         Route::get('category-list', [CategoryController::class, 'list'])->name('category-list');
         Route::get('category-create', [CategoryController::class, 'create'])->name('category-create');
@@ -204,14 +236,74 @@ Route::middleware(['auth'])->group(function () {
         //Lịch sử nhập - xuất
         Route::resource('inventory_logs', InventoryLogController::class);
     });
-    // Trang dành cho Quản lý
+    // Trang dành cho Quản lý==================================================
     Route::middleware(['role:manager'])->group(function () {
         Route::get('/manager', function () {
             return "Trang dành cho Quản lý";
         });
     });
-    // Trang dành cho Nhân viên
+    // Trang dành cho Nhân viên===========================
     Route::middleware(['role:staff'])->group(function () {
-        Route::get('/staff', [StaffController::class, 'index'])->name('staff.dashboard');
+        // Dashboard
+        Route::get('/staff', [StaffController::class, 'index'])->name('staff.index');
+        // Thêm route confirmPayment
+        Route::post('/invoices/{id}/confirm-payment', [InvoiceController::class, 'confirmPayment'])->name('invoices.confirmPayment');
+        // Quản lý hóa đơn
+        Route::get('/staff/invoices/create', [StaffController::class, 'create'])->name('staff.create');
+        Route::post('/staff/invoices/store', [StaffController::class, 'store'])->name('staff.store');
+        Route::get('/staff/invoices/{id}/edit', [StaffController::class, 'edit'])->name('staff.edit');
+
+        // Thêm món ăn vào hóa đơn
+        Route::post('/staff/invoices/{id}/add-dish', [StaffController::class, 'addDish'])->name('staff.addDish');
+        Route::post('/staff/invoices/{id}/add-dish-with-variant', [StaffController::class, 'addDishWithVariant'])->name('staff.addDishWithVariant');
+
+        // Gửi đơn hàng đến bếp
+        Route::post('/staff/invoices/{invoice}/send-to-kitchen', [StaffController::class, 'sendToKitchen'])->name('staff.sendToKitchen');
+
+        // Quản lý món ăn trong giỏ hàng
+        Route::post('/staff/invoices/{id}/increase-item', [StaffController::class, 'increaseItem'])->name('staff.increaseItem');
+        Route::post('/staff/invoices/{id}/decrease-item', [StaffController::class, 'decreaseItem'])->name('staff.decreaseItem');
+        Route::delete('/staff/invoices/{invoice_id}/items/{item_id}/remove', [StaffController::class, 'removeItem'])->name('staff.removeItem');
+
+        // Thanh toán
+        Route::get('/staff/invoices/{id}/payment', [StaffController::class, 'payment'])->name('staff.payment');
+        Route::get('/staff/invoices/{id}/checkout', [StaffController::class, 'checkout'])->name('staff.checkout');
+        Route::get('/staff/invoices/{id}/confirm-payment', [StaffController::class, 'confirmPayment'])->name('staff.confirmPayment');
+
+        // In hóa đơn
+        Route::get('/staff/invoices/{id}/print', [StaffController::class, 'print'])->name('staff.print');
+
+        // Xóa hóa đơn
+        Route::delete('/staff/invoices/{id}/delete', [StaffController::class, 'destroy'])->name('staff.destroy');
+        // Trong nhóm Route::middleware(['auth', 'role:staff']), thêm dòng sau:
+        Route::get('/staff/invoices/check-payment/{invoice_id}', [StaffController::class, 'checkPayment'])->name('staff.checkPayment');
+        // Lấy danh sách bàn theo khu vực
+        Route::get('/staff/get-tables/{area_id}', [StaffController::class, 'getTables'])->name('staff.getTables');
     });
+    // Trang dành cho Đầu bếp=====================
+    Route::middleware(['role:chef'])->group(function () {
+        Route::get('/chef', [ChefController::class, 'index'])->name('chef.dashboard');
+        Route::post('/chef/confirm-order/{invoice}', [ChefController::class, 'confirmOrder'])->name('chef.confirmOrder');
+    });
+    // Trang dành cho Khách hàng=====================
+    Route::middleware(['role:customer'])->group(function (): void {
+        // Dashboard
+        Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
+
+        // Chọn bàn đơn giản
+        Route::get('/select-table', [CustomerController::class, 'selectTable'])->name('customer.select-table');
+        Route::get('/reserve-table/{tableId}', [CustomerController::class, 'reserveTable'])->name('customer.reserve-table');
+
+        // Floor plan (giữ lại nếu muốn)
+        Route::get('/floor-plan/{floor?}', [CustomerController::class, 'floorPlan'])->name('customer.floor-plan');
+
+        // Reservations
+        Route::get('/reservations', [CustomerController::class, 'myReservations'])->name('customer.reservations');
+        Route::post('/reservations', [CustomerController::class, 'makeReservation'])->name('customer.reservations.store');
+        Route::delete('/reservations/{tableId}', [CustomerController::class, 'cancelReservation'])->name('customer.reservations.cancel');
+    });
+
+    // Đặt route VNPay ở ngoài middleware role để cả owner và staff đều có thể truy cập
+    Route::get('/vnpay-payment/{invoice_id}', [VnpayController::class, 'createPayment'])->name('vnpay.payment')->middleware('auth');
+    Route::get('/vnpay-return', [VnpayController::class, 'vnpayReturn'])->name('vnpay.return')->middleware('auth');
 });

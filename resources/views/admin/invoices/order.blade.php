@@ -14,8 +14,6 @@
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
         }
 
-
-
         .dish-image {
             height: 140px;
             object-fit: cover;
@@ -176,11 +174,43 @@
             justify-content: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
+        .kitchen-section-header {
+            background: linear-gradient(90deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 4px solid #28a745;
+        }
+
+        .pending-section-header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            border-left: 4px solid #ffc107;
+        }
+
+        .cart-item.bg-light:hover {
+            background-color: #f8f9fa !important;
+            border-left-color: #28a745;
+        }
     </style>
 @endsection
 
 @section('content')
     <div class="container-fluid">
+        <!-- Back button to invoices.index -->
+        <div class="mb-3">
+            <a href="{{ route('invoices.index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+            </a>
+        </div>
+        @if (session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
+        @if (session('warning'))
+            <div class="alert alert-warning">{{ session('warning') }}</div>
+        @endif
         <div class="row">
             <!-- Phần Menu Món ăn hoặc Chi tiết món ăn -->
             <div class="col-lg-8">
@@ -205,11 +235,8 @@
                                 <span
                                     class="text-danger fs-5 fw-bold">{{ number_format($selected_dish->price, 0, ',', '.') }}
                                     VND</span>
-                                <span class="badge bg-{{ $selected_dish->stock > 0 ? 'success' : 'danger' }}">
-                                    {{ $selected_dish->stock > 0 ? 'Còn ' . $selected_dish->stock : 'Hết hàng' }}
-                                    @if (isset($selected_dish->available_stock) && $selected_dish->available_stock < $selected_dish->stock)
-                                        (Có thể đặt thêm: {{ $selected_dish->available_stock }})
-                                    @endif
+                                <span class="badge bg-{{ $selected_dish->available_stock > 0 ? 'success' : 'danger' }}">
+                                    Còn {{ $selected_dish->available_stock }}
                                 </span>
                             </div>
 
@@ -223,7 +250,7 @@
 
                                     <div class="mb-4">
                                         <!-- Option gốc luôn hiển thị nếu còn available_stock -->
-                                        @if (isset($selected_dish->available_stock) && $selected_dish->available_stock > 0)
+                                        @if ($selected_dish->available_stock > 0)
                                             <div class="form-check variant-option">
                                                 <input class="form-check-input" type="radio" name="variant_id"
                                                     id="variant-original" value="" checked>
@@ -240,42 +267,34 @@
                                             </div>
                                         @endif
 
-                                        <!-- Chỉ hiển thị các biến thể còn stock -->
+                                        <!-- Tất cả biến thể đều hiển thị vì dùng chung kho với dish gốc -->
                                         @foreach ($selected_dish->variants as $variant)
-                                            @if (isset($variant->available_stock) && $variant->available_stock > 0)
-                                                <div class="form-check variant-option">
-                                                    <input class="form-check-input" type="radio" name="variant_id"
-                                                        id="variant{{ $variant->id }}" value="{{ $variant->id }}"
-                                                        {{ !isset($selected_dish->available_stock) || $selected_dish->available_stock <= 0 ? 'checked' : '' }}>
-                                                    <label class="form-check-label d-flex justify-content-between w-100"
-                                                        for="variant{{ $variant->id }}">
-                                                        <span class="variant-name">{{ $variant->name }}</span>
-                                                        <span
-                                                            class="variant-price">{{ number_format($variant->price, 0, ',', '.') }}
-                                                            VND</span>
-                                                    </label>
-                                                    <small class="text-muted d-block ms-4">
-                                                        Có thể đặt thêm: {{ $variant->available_stock }}
-                                                    </small>
-                                                </div>
-                                            @endif
+                                            <div class="form-check variant-option">
+                                                <input class="form-check-input" type="radio" name="variant_id"
+                                                    id="variant{{ $variant->id }}" value="{{ $variant->id }}"
+                                                    {{ $selected_dish->available_stock <= 0 && $loop->first ? 'checked' : '' }}>
+                                                <label class="form-check-label d-flex justify-content-between w-100"
+                                                    for="variant{{ $variant->id }}">
+                                                    <span class="variant-name">{{ $variant->name }}</span>
+                                                    <span
+                                                        class="variant-price">{{ number_format($variant->price, 0, ',', '.') }}
+                                                        VND</span>
+                                                </label>
+                                                <small class="text-muted d-block ms-4">
+                                                    Có thể đặt thêm: {{ $selected_dish->available_stock }}
+                                                </small>
+                                            </div>
                                         @endforeach
                                     </div>
 
-                                    <!-- Chỉ hiển thị nút thêm vào giỏ nếu có ít nhất một tùy chọn khả dụng -->
-                                    @if (
-                                        (isset($selected_dish->available_stock) && $selected_dish->available_stock > 0) ||
-                                            $selected_dish->variants->where('available_stock', '>', 0)->count() > 0)
+                                    <!-- Hiển thị nút thêm vào giỏ nếu còn stock -->
+                                    @if ($selected_dish->available_stock > 0)
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div class="quantity-control">
                                                 <span class="me-2">Số lượng:</span>
                                                 <input type="number" name="quantity" class="form-control quantity-input"
                                                     value="1" min="1"
-                                                    max="{{ isset($selected_dish->available_stock)
-                                                        ? $selected_dish->available_stock
-                                                        : ($selected_dish->variants->where('available_stock', '>', 0)->first()
-                                                            ? $selected_dish->variants->where('available_stock', '>', 0)->first()->available_stock
-                                                            : 1) }}">
+                                                    max="{{ $selected_dish->available_stock }}">
                                             </div>
 
                                             <button type="submit" class="btn btn-primary">
@@ -299,8 +318,7 @@
                                         <div class="quantity-control">
                                             <span class="me-2">Số lượng:</span>
                                             <input type="number" name="quantity" class="form-control quantity-input"
-                                                value="1" min="1"
-                                                max="{{ isset($selected_dish->available_stock) ? $selected_dish->available_stock : $selected_dish->stock }}">
+                                                value="1" min="1" max="{{ $selected_dish->available_stock }}">
                                         </div>
 
                                         <button type="submit" class="btn btn-primary"
@@ -406,12 +424,9 @@
                                                     <span
                                                         class="text-danger fw-bold">{{ number_format($dish->price, 0, ',', '.') }}
                                                         VND</span>
-                                                    <span class="badge bg-{{ $dish->stock > 0 ? 'success' : 'danger' }}">
-                                                        {{ $dish->stock > 0 ? 'Còn ' . $dish->stock : 'Hết hàng' }}
-                                                        @if (isset($dish->available_stock) && $dish->available_stock < $dish->stock)
-                                                            <br><small>(Có thể đặt thêm:
-                                                                {{ $dish->available_stock }})</small>
-                                                        @endif
+                                                    <span
+                                                        class="badge bg-{{ $dish->available_stock > 0 ? 'success' : 'danger' }}">
+                                                        Còn {{ $dish->available_stock }}
                                                     </span>
                                                 </div>
                                             </div>
@@ -478,159 +493,291 @@
                         </div>
                     </div>
 
-                    <!-- Giỏ hàng -->
+                    <!-- Giỏ hàng cải thiện -->
                     <div class="card shadow-sm mb-4">
                         <div class="card-header bg-white py-3">
-                            <h5 class="mb-0"><i class="fas fa-shopping-cart text-primary me-2"></i>Danh sách đã đặt</h5>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-shopping-cart text-primary me-2"></i>
+                                    Danh sách đã đặt
+                                </h5>
+                                @if ($invoice->items->count() > 0)
+                                    <span class="badge bg-info">
+                                        Tổng: {{ $invoice->items->count() }} món
+                                    </span>
+                                @endif
+                            </div>
                         </div>
+
                         <div class="card-body p-0">
-                            <!-- Danh sách món đã đặt -->
                             <div class="order-list">
                                 @if (count($invoice->items) > 0)
-                                    <div class="table-responsive">
-                                        <table class="table table-borderless mb-0">
-                                            <thead class="bg-light">
-                                                <tr>
-                                                    <th class="py-2">Món ăn</th>
-                                                    <th class="py-2 text-center" width="80">SL</th>
-                                                    <th class="py-2 text-end">Thành tiền</th>
-                                                    <th class="py-2" width="40"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($invoice->items as $item)
-                                                    @php
-                                                        // Lấy số lượng tồn kho hiện tại của món ăn hoặc biến thể
-                                                        $maxStock = $item->variant_id
-                                                            ? ($item->variant
-                                                                ? $item->variant->stock
-                                                                : 0)
-                                                            : ($item->dish
-                                                                ? $item->dish->stock
-                                                                : 0);
 
-                                                        // Tính số lượng đã đặt của món này (trừ chính nó)
-                                                        $otherQuantity = 0;
-                                                        $query = \App\Models\InvoiceDetail::where(
-                                                            'invoice_id',
-                                                            $invoice->invoice_id,
-                                                        )->where('dish_id', $item->dish_id);
+                                    <!-- Phần món đã gửi đến bếp -->
+                                    @if ($invoice->sentItems && $invoice->sentItems->count() > 0)
+                                        <div class="bg-light border-bottom">
+                                            <div class="px-3 py-2 d-flex justify-content-between align-items-center">
+                                                <h6 class="mb-0 text-success">
+                                                    <i class="fas fa-check-circle me-1"></i>
+                                                    Đã gửi bếp
+                                                </h6>
+                                                <span class="badge bg-success">
+                                                    {{ $invoice->sentItems->count() }} món
+                                                </span>
+                                            </div>
+                                        </div>
 
-                                                        if ($item->variant_id) {
-                                                            $query->where('variant_id', $item->variant_id);
-                                                        } else {
-                                                            $query->whereNull('variant_id');
-                                                        }
+                                        <div class="table-responsive">
+                                            <table class="table table-borderless mb-0">
+                                                <tbody>
+                                                    @foreach ($invoice->sentItems as $item)
+                                                        <tr class="border-bottom bg-light">
+                                                            <td class="align-middle px-3 py-2">
+                                                                <div class="d-flex align-items-center">
+                                                                    <div class="me-2">
+                                                                        <i class="fas fa-lock text-success"></i>
+                                                                    </div>
+                                                                    <div class="flex-grow-1">
+                                                                        <p class="mb-0 fw-medium">{{ $item->dish->name }}
+                                                                        </p>
+                                                                        @if ($item->variant)
+                                                                            <small
+                                                                                class="text-muted d-block">{{ $item->variant->name }}</small>
+                                                                        @endif
+                                                                        <small class="text-muted">
+                                                                            {{ number_format($item->price, 0, ',', '.') }}
+                                                                            VND x {{ $item->quantity }}
+                                                                        </small>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="align-middle text-end px-3 py-2">
+                                                                <div class="fw-bold">
+                                                                    {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
+                                                                    VND
+                                                                </div>
+                                                                <small class="text-muted">
+                                                                    {{ \Carbon\Carbon::parse($item->sent_to_kitchen_at)->format('H:i d/m') }}
+                                                                </small>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    @endif
 
-                                                        // Sử dụng detail_id thay vì id
-                                                        $query->where('detail_id', '!=', $item->detail_id);
-                                                        $otherQuantity = $query->sum('quantity');
+                                    <!-- Phần món mới order (pending) -->
+                                    @if ($invoice->pendingItems && $invoice->pendingItems->count() > 0)
+                                        @if ($invoice->sentItems && $invoice->sentItems->count() > 0)
+                                            <div class="bg-primary text-white">
+                                                <div class="px-3 py-2 d-flex justify-content-between align-items-center">
+                                                    <h6 class="mb-0">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        Chờ gửi bếp
+                                                    </h6>
+                                                    <span class="badge bg-warning text-dark">
+                                                        {{ $invoice->pendingItems->count() }} món
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        @endif
 
-                                                        // Số lượng tối đa có thể đặt = số lượng tồn kho - số lượng đã đặt bởi các dòng khác
-                                                        $availableToOrder = max(0, $maxStock - $otherQuantity);
+                                        <div class="table-responsive">
+                                            <table class="table table-borderless mb-0">
+                                                @if (!($invoice->sentItems && $invoice->sentItems->count() > 0))
+                                                    <thead class="bg-light">
+                                                        <tr>
+                                                            <th class="py-2 px-3">Món ăn</th>
+                                                            <th class="py-2 text-center" width="100">Số lượng</th>
+                                                            <th class="py-2 text-end px-3">Thành tiền</th>
+                                                            <th class="py-2" width="50"></th>
+                                                        </tr>
+                                                    </thead>
+                                                @endif
+                                                <tbody>
+                                                    @foreach ($invoice->pendingItems as $item)
+                                                        <tr class="border-bottom">
+                                                            <td class="align-middle px-3 py-2">
+                                                                <div class="d-flex align-items-center">
+                                                                    <div class="me-2">
+                                                                        <i class="fas fa-edit text-primary"></i>
+                                                                    </div>
+                                                                    <div class="flex-grow-1">
+                                                                        <p class="mb-0 fw-medium">{{ $item->dish->name }}
+                                                                        </p>
+                                                                        @if ($item->variant)
+                                                                            <small
+                                                                                class="text-muted d-block">{{ $item->variant->name }}</small>
+                                                                        @endif
+                                                                        <small class="text-muted">
+                                                                            {{ number_format($item->price, 0, ',', '.') }}
+                                                                            VND
+                                                                        </small>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
 
-                                                        // Số lượng hiện tại không thể vượt quá availableToOrder
-                                                        $currentQty = min($item->quantity, $maxStock);
+                                                            <td class="align-middle text-center px-2">
+                                                                <div
+                                                                    class="d-flex align-items-center justify-content-center">
+                                                                    <!-- Nút giảm -->
+                                                                    <form
+                                                                        action="{{ route('invoices.decreaseItem', $invoice->invoice_id) }}"
+                                                                        method="POST" class="me-1">
+                                                                        @csrf
+                                                                        <input type="hidden" name="detail_id"
+                                                                            value="{{ $item->detail_id }}">
+                                                                        <button type="submit"
+                                                                            class="btn btn-sm btn-outline-secondary"
+                                                                            {{ $item->quantity <= 1 ? 'disabled' : '' }}
+                                                                            style="width: 24px; height: 24px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                                                            <i class="fas fa-minus"
+                                                                                style="font-size: 8px;"></i>
+                                                                        </button>
+                                                                    </form>
 
-                                                        // Số lượng tối đa có thể cập nhật = số lượng hiện tại + availableToOrder
-                                                        $maxPossible = $item->quantity + $availableToOrder;
-                                                    @endphp
-                                                    <tr class="cart-item">
-                                                        <td class="align-middle">
-                                                            <p class="mb-0 fw-medium">{{ $item->dish->name }}</p>
-                                                            @if ($item->variant)
-                                                                <small
-                                                                    class="text-muted d-block">{{ $item->variant->name }}</small>
-                                                            @endif
-                                                            <small
-                                                                class="text-muted">{{ number_format($item->price, 0, ',', '.') }}
-                                                                VND</small>
-                                                        </td>
-                                                        <td class="align-middle text-center">
-                                                            <div class="d-flex align-items-center justify-content-center">
+                                                                    <!-- Số lượng -->
+                                                                    <span class="mx-2 fw-bold"
+                                                                        style="min-width: 25px; text-align: center;">
+                                                                        {{ $item->quantity }}
+                                                                    </span>
+
+                                                                    <!-- Nút tăng -->
+                                                                    <form
+                                                                        action="{{ route('invoices.increaseItem', $invoice->invoice_id) }}"
+                                                                        method="POST" class="ms-1">
+                                                                        @csrf
+                                                                        <input type="hidden" name="detail_id"
+                                                                            value="{{ $item->detail_id }}">
+                                                                        <button type="submit"
+                                                                            class="btn btn-sm btn-outline-secondary"
+                                                                            {{ $item->availableToOrder <= 0 ? 'disabled' : '' }}
+                                                                            style="width: 24px; height: 24px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                                                            <i class="fas fa-plus"
+                                                                                style="font-size: 8px;"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                                @if ($item->availableToOrder <= 0)
+                                                                    <small class="text-danger d-block mt-1">Hết
+                                                                        hàng</small>
+                                                                @else
+                                                                    <small class="text-muted d-block mt-1">Còn
+                                                                        {{ $item->availableToOrder }}</small>
+                                                                @endif
+                                                            </td>
+
+                                                            <td class="align-middle text-end px-3">
+                                                                <div class="fw-bold">
+                                                                    {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
+                                                                    VND
+                                                                </div>
+                                                            </td>
+
+                                                            <td class="align-middle px-2">
                                                                 <form
-                                                                    action="{{ route('invoices.decreaseItem', $invoice->invoice_id) }}"
-                                                                    method="POST" class="me-1">
+                                                                    action="{{ route('invoices.removeItem', ['invoice_id' => $invoice->invoice_id, 'item_id' => $item->detail_id]) }}"
+                                                                    method="POST">
                                                                     @csrf
-                                                                    <input type="hidden" name="detail_id"
-                                                                        value="{{ $item->detail_id }}">
+                                                                    @method('DELETE')
                                                                     <button type="submit"
-                                                                        class="btn btn-sm btn-outline-secondary"
-                                                                        {{ $item->quantity <= 1 ? 'disabled' : '' }}
-                                                                        style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; padding: 0;">
-                                                                        <i class="fas fa-minus"
+                                                                        class="btn btn-sm text-danger border-0 p-1"
+                                                                        onclick="return confirm('Bạn có chắc muốn xóa món này?')"
+                                                                        style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
+                                                                        <i class="fas fa-times"
                                                                             style="font-size: 10px;"></i>
                                                                     </button>
                                                                 </form>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    @endif
 
-                                                                <span class="mx-2 text-center"
-                                                                    style="min-width: 30px;">{{ $item->quantity }}</span>
-
-                                                                <form
-                                                                    action="{{ route('invoices.increaseItem', $invoice->invoice_id) }}"
-                                                                    method="POST" class="ms-1">
-                                                                    @csrf
-                                                                    <input type="hidden" name="detail_id"
-                                                                        value="{{ $item->detail_id }}">
-                                                                    <button type="submit"
-                                                                        class="btn btn-sm btn-outline-secondary"
-                                                                        {{ $item->availableToOrder <= 0 ? 'disabled' : '' }}
-                                                                        style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; padding: 0;">
-                                                                        <i class="fas fa-plus"
-                                                                            style="font-size: 10px;"></i>
-                                                                    </button>
-                                                                </form>
-                                                            </div>
-
-                                                        </td>
-
-                                                        <td class="align-middle text-end fw-bold">
-                                                            {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
-                                                            VND
-                                                        </td>
-
-                                                        <td class="align-middle px-2">
-                                                            <form
-                                                                action="{{ route('invoices.removeItem', ['invoice_id' => $invoice->invoice_id, 'item_id' => $item->detail_id]) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn btn-sm text-danger border-0"
-                                                                    onclick="return confirm('Bạn có chắc muốn xóa món này?')">
-                                                                    <i class="fas fa-times"></i>
-                                                                </button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                    <!-- Thông báo khi không có món pending -->
+                                    @if (!$invoice->pendingItems || $invoice->pendingItems->count() == 0)
+                                        @if ($invoice->sentItems && $invoice->sentItems->count() > 0)
+                                            <div class="text-center p-3 bg-light border-top">
+                                                <div class="text-success mb-2">
+                                                    <i class="fas fa-check-circle fa-2x"></i>
+                                                </div>
+                                                <p class="mb-1 fw-medium">Tất cả món đã được gửi đến bếp</p>
+                                                <small class="text-muted">Bạn có thể tiếp tục order thêm món mới từ
+                                                    menu</small>
+                                            </div>
+                                        @endif
+                                    @endif
                                 @else
+                                    <!-- Giỏ hàng trống -->
                                     <div class="empty-cart text-center p-4">
                                         <i class="fas fa-shopping-cart fa-3x mb-3 text-muted"></i>
-                                        <p>Chưa có món ăn nào trong đơn hàng</p>
-                                        <p class="small text-muted">Vui lòng chọn món từ menu bên trái</p>
+                                        <p class="mb-1">Chưa có món ăn nào trong đơn hàng</p>
+                                        <small class="text-muted">Vui lòng chọn món từ menu bên trái</small>
                                     </div>
                                 @endif
                             </div>
 
-                            <!-- Tổng tiền & thanh toán -->
+                            <!-- Footer: Tổng tiền & thanh toán -->
                             <div class="card-footer bg-white border-top">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="fw-medium">Tổng tiền:</span>
-                                    <span
-                                        class="text-danger fw-bold fs-5">{{ number_format($invoice->total_price, 0, ',', '.') }}
-                                        VND</span>
+                                <!-- Thống kê chi tiết -->
+                                @if ($invoice->sentItems && $invoice->sentItems->count() > 0)
+                                    <div class="row text-center mb-3 small">
+                                        <div class="col-6">
+                                            <div class="border-end pe-2">
+                                                <div class="text-muted">Đã gửi bếp</div>
+                                                <div class="fw-bold text-success">
+                                                    @php
+                                                        $sentTotal = $invoice->sentItems->sum(function ($item) {
+                                                            return $item->quantity * $item->price;
+                                                        });
+                                                    @endphp
+                                                    {{ number_format($sentTotal, 0, ',', '.') }} ₫
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="ps-2">
+                                                <div class="text-muted">Chờ gửi bếp</div>
+                                                <div class="fw-bold text-primary">
+                                                    @php
+                                                        $pendingTotal = $invoice->pendingItems
+                                                            ? $invoice->pendingItems->sum(function ($item) {
+                                                                return $item->quantity * $item->price;
+                                                            })
+                                                            : 0;
+                                                    @endphp
+                                                    {{ number_format($pendingTotal, 0, ',', '.') }} ₫
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Tổng cộng -->
+                                <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                                    <span class="fw-medium">Tổng cộng:</span>
+                                    <span class="text-danger fw-bold fs-5">
+                                        {{ number_format($invoice->total_price, 0, ',', '.') }} VND
+                                    </span>
                                 </div>
 
-                                <div class="d-grid gap-2">
-                                    <a href="{{ route('invoices.payment', $invoice->invoice_id) }}"
-                                        class="btn btn-primary order-complete-btn">
-                                        <i class="fas fa-credit-card me-2"></i>Thanh toán
-                                    </a>
-                                </div>
+                                <!-- Nút hành động -->
+                                @if ($invoice->pendingItems && $invoice->pendingItems->count() > 0)
+                                    <div class="d-grid">
+                                        <form action="{{ route('invoices.sendToKitchen', $invoice->invoice_id) }}"
+                                            method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success w-100 order-complete-btn"
+                                                onclick="return confirm('Xác nhận gửi {{ $invoice->pendingItems->count() }} món mới đến đầu bếp?')">
+                                                <i class="fas fa-paper-plane me-2"></i>
+                                                Gửi {{ $invoice->pendingItems->count() }} món đến bếp
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

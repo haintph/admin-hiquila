@@ -627,16 +627,20 @@
                             <span class="nav-icon">
                                 <iconify-icon icon="maki:grocery"></iconify-icon>
                             </span>
-                            <span class="nav-text"> Dishes </span>
+                            <span class="nav-text"> Sản phẩm </span>
                         </a>
                         <div class="collapse" id="sidebarProducts">
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
                                     <a class="sub-nav-link" href="{{ route('dish_list') }}">Danh sách</a>
                                 </li>
+                                <li class="sub-nav-item">
+                                    <a class="sub-nav-link" href="{{ route('variant_list') }}">Biến thể</a>
+                                </li>
                             </ul>
                         </div>
                     </li>
+
 
                     <li class="nav-item">
                         <a class="nav-link menu-arrow" href="#sidebarCategory" data-bs-toggle="collapse"
@@ -644,7 +648,7 @@
                             <span class="nav-icon">
                                 <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
                             </span>
-                            <span class="nav-text"> Category </span>
+                            <span class="nav-text"> Danh mục </span>
                         </a>
                         <div class="collapse" id="sidebarCategory">
                             <ul class="nav sub-navbar-nav">
@@ -661,7 +665,7 @@
                             <span class="nav-icon">
                                 <iconify-icon icon="line-md:clipboard-list"></iconify-icon>
                             </span>
-                            <span class="nav-text"> Sub Category </span>
+                            <span class="nav-text"> Danh mục con </span>
                         </a>
                         <div class="collapse" id="sidebarSubCategory">
                             <ul class="nav sub-navbar-nav">
@@ -672,22 +676,19 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link menu-arrow" href="#sidebarInventory" data-bs-toggle="collapse"
-                            role="button" aria-expanded="false" aria-controls="sidebarInventory">
+                        <a class="nav-link menu-arrow" href="#sidebarReservations" data-bs-toggle="collapse"
+                            role="button" aria-expanded="false" aria-controls="sidebarReservations">
                             <span class="nav-icon">
-                                <iconify-icon icon="solar:box-bold-duotone"></iconify-icon>
+                                <iconify-icon icon="solar:bookmark-square-bold-duotone"></iconify-icon>
                             </span>
-                            <span class="nav-text"> Inventory </span>
+                            <span class="nav-text"> Quản lý đặt bàn </span>
                         </a>
-                        <div class="collapse" id="sidebarInventory">
+                        <div class="collapse" id="sidebarReservations">
                             <ul class="nav sub-navbar-nav">
-
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="inventory-warehouse.html">Warehouse</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="inventory-received-orders.html">Received
-                                        Orders</a>
+                                    <a class="sub-nav-link" href="{{ route('admin.reservations.index') }}">Danh sách
+                                        đặt
+                                        bàn</a>
                                 </li>
                             </ul>
                         </div>
@@ -726,18 +727,12 @@
                             <span class="nav-icon">
                                 <iconify-icon icon="solar:card-send-bold-duotone"></iconify-icon>
                             </span>
-                            <span class="nav-text"> Areas </span>
+                            <span class="nav-text"> Quản lý khu vực </span>
                         </a>
                         <div class="collapse" id="sidebarPurchases">
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="{{ route('areas.index') }}">List</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="purchase-order.html">Order</a>
-                                </li>
-                                <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="purchase-returns.html">Return</a>
+                                    <a class="sub-nav-link" href="{{ route('areas.index') }}">Danh sách</a>
                                 </li>
                             </ul>
                         </div>
@@ -750,12 +745,12 @@
                                 <iconify-icon icon="mdi:table-chair"></iconify-icon>
 
                             </span>
-                            <span class="nav-text"> Tables </span>
+                            <span class="nav-text"> Quản lý bàn </span>
                         </a>
                         <div class="collapse" id="sidebarAttributes">
                             <ul class="nav sub-navbar-nav">
                                 <li class="sub-nav-item">
-                                    <a class="sub-nav-link" href="{{ route('tables.index') }}">List</a>
+                                    <a class="sub-nav-link" href="{{ route('tables.index') }}">Danh sách</a>
                                 </li>
                             </ul>
                         </div>
@@ -765,7 +760,7 @@
                         <a class="nav-link menu-arrow" href="#sidebarInvoice" data-bs-toggle="collapse"
                             role="button" aria-expanded="false" aria-controls="sidebarInvoice">
                             <span class="nav-icon">
-                                 <iconify-icon icon="solar:bag-smile-bold-duotone"></iconify-icon>
+                                <iconify-icon icon="solar:bag-smile-bold-duotone"></iconify-icon>
                             </span>
                             <span class="nav-text"> Orders </span>
                         </a>

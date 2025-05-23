@@ -43,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
         //         // Cập nhật trạng thái khuyến mãi thành Inactive
         //         $promotion->update(['status' => false]);
         //     }
-        // }          
+        // }   
+               
     }
 }
