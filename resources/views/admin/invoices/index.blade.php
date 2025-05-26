@@ -201,11 +201,19 @@
                                                 </a>
 
                                                 @if ($invoice->status == 'Đã phục vụ' && $invoice->total_price > 0)
-                                                    <a href="{{ route('invoices.payment', $invoice->invoice_id) }}"
-                                                        class="btn btn-success btn-sm">
-                                                        <iconify-icon icon="solar:card-bold-duotone"></iconify-icon> Thanh
-                                                        toán
-                                                    </a>
+                                                    @if (auth()->user()->role === 'owner')
+                                                        <a href="{{ route('invoices.payment', $invoice->invoice_id) }}"
+                                                            class="btn btn-success btn-sm">
+                                                            <iconify-icon icon="solar:card-bold-duotone"></iconify-icon>
+                                                            Thanh toán
+                                                        </a>
+                                                    @elseif (auth()->user()->role === 'staff')
+                                                        <a href="{{ route('staff.payment', $invoice->invoice_id) }}"
+                                                            class="btn btn-success btn-sm">
+                                                            <iconify-icon icon="solar:card-bold-duotone"></iconify-icon>
+                                                            Thanh toán
+                                                        </a>
+                                                    @endif
                                                 @endif
 
                                                 @if ($invoice->total_price == 0)
@@ -224,7 +232,7 @@
                                                 <!-- Hóa đơn đã thanh toán - có thể in và hoàn tất -->
                                                 <a href="{{ route('invoices.print', $invoice->invoice_id) }}"
                                                     class="btn btn-primary btn-sm" target="_blank">
-                                                    <iconify-icon icon="solar:printer-bold-duotone"></iconify-icon> In
+                                                    <iconify-icon icon="solar:printer-bold-duotone"></iconify-icon> Chi tiết
                                                 </a>
 
                                                 <form action="{{ route('invoices.finish', $invoice->invoice_id) }}"
@@ -241,7 +249,7 @@
                                                 <!-- Hóa đơn đã hoàn thành -->
                                                 <a href="{{ route('invoices.print', $invoice->invoice_id) }}"
                                                     class="btn btn-outline-primary btn-sm" target="_blank">
-                                                    <iconify-icon icon="solar:printer-bold-duotone"></iconify-icon> In lại
+                                                    <iconify-icon icon="solar:printer-bold-duotone"></iconify-icon> Chi tiết
                                                 </a>
                                                 <span class="badge bg-success">
                                                     <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Đã

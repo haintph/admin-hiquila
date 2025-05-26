@@ -12,11 +12,11 @@
     <script>
         function checkPaymentStatus() {
             $.ajax({
-                url: "{{ route('staff.checkPayment', ['invoice_id' => $invoice->invoice_id]) }}",
+                url: "{{ route('invoices.checkPayment', ['invoice_id' => $invoice->invoice_id]) }}",
                 method: "GET",
                 success: function(response) {
                     if (response.paid) {
-                        window.location.href = "{{ route('staff.index') }}"; // Chuyển về danh sách hóa đơn
+                        window.location.href = "{{ route('invoices.index') }}"; // Chuyển về danh sách hóa đơn
                     }
                 }
             });

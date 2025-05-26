@@ -7,11 +7,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use Illuminate\Routing\Route;
 
 class AuthController extends Controller
 {
     public function showLoginForm()
     {
+        // Nếu đã đăng nhập, redirect về dashboard phù hợp
+        if (Auth::check()) {
+            return redirect($this->getRedirectUrl(Auth::user()));
+        }
+        
         return view('admin.auth.login');
     }
 
@@ -42,6 +48,7 @@ class AuthController extends Controller
 
         // Đăng nhập nếu thông tin hợp lệ
         if (Auth::attempt($request->only('email', 'password'))) {
+            $request->session()->regenerate();
             return redirect()->intended($this->getRedirectUrl($user))->with('success', 'Đăng nhập thành công!');
         }
 
@@ -54,7 +61,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'Bạn đã đăng xuất!');
+        return redirect()->route('login')->with('success', 'Bạn đã đăng xuất!');
     }
 
     /**
@@ -62,14 +69,34 @@ class AuthController extends Controller
      */
     private function getRedirectUrl($user)
     {
-        return match ($user->role) {
-            'owner' => route('owner.dashboard'), // Trang admin chính
-            'manager' => route('manager.dashboard'), // Trang quản lý
-            'staff' => route('staff.index'),//Trang nhân viên
-             'chef' => route('chef.dashboard'),// Trang đầu bếp
-             'customer' => route('customer.dashboard'),// Trang khách hàng
-            default => url('/'), // Redirect về trang chủ nếu không xác định
-        };
+        try {
+            return match ($user->role) {
+                'owner' => route('owner.dashboard'),          // /owner
+                'manager' => route('manager.attendance.list'), // /manager/attendance
+                'staff' => route('staff.index'),               // /staff
+                'chef' => route('chef.dashboard'),             // /chef
+                'customer' => route('customer.dashboard'),     // /dashboard
+                default => route('login'), // Redirect về login nếu role không xác định
+            };
+        } catch (\Exception $e) {
+            // Fallback nếu có lỗi
+            return route('login');
+        }
     }
 
+    /**
+     * Kiểm tra route có tồn tại không, nếu không thì dùng URL dự phòng
+     */
+    private function safeRoute($routeName, $fallbackUrl)
+    {
+        try {
+            if (Route::has($routeName)) {
+                return route($routeName);
+            }
+        } catch (\Exception $e) {
+            // Route không tồn tại
+        }
+        
+        return $fallbackUrl;
+    }
 }

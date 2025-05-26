@@ -103,7 +103,11 @@
                 <h6 class="m-0 font-weight-bold text-primary">Tìm kiếm & Lọc</h6>
             </div>
             <div class="card-body">
-                <form method="GET" action="{{ route('admin.reservations.index') }}">
+                @php
+                    // Sử dụng URL trực tiếp thay vì route names
+                    $currentUrl = '/admin/reservations';
+                @endphp
+                <form method="GET" action="{{ $currentUrl }}">
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label for="search_name" class="form-label">Tên khách hàng</label>
@@ -152,7 +156,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-search"></i> Tìm kiếm
                             </button>
-                            <a href="{{ route('admin.reservations.index') }}" class="btn btn-secondary">
+                            <a href="{{ $currentUrl }}" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Xóa lọc
                             </a>
                         </div>
@@ -164,7 +168,10 @@
         <!-- Tìm kiếm nhanh -->
         <div class="card shadow mb-4">
             <div class="card-body">
-                <form method="GET" action="{{ route('admin.reservations.quick-search') }}" class="d-flex">
+                @php
+                    $quickSearchUrl = '/admin/reservations/search/quick';
+                @endphp
+                <form method="GET" action="{{ $quickSearchUrl }}" class="d-flex">
                     <input type="text" class="form-control me-2" name="q"
                         placeholder="Tìm nhanh theo tên, SĐT, hoặc số bàn..." value="{{ request('q') }}">
                     <button type="submit" class="btn btn-outline-primary">
@@ -252,15 +259,20 @@
                                         </td>
 
                                         <td>
+                                            @php
+                                                $showUrl = "/admin/reservations/{$table->table_id}";
+                                                $checkinUrl = "/admin/reservations/{$table->table_id}/checkin";
+                                                $cancelUrl = "/admin/reservations/{$table->table_id}/cancel";
+                                            @endphp
                                             <div class="btn-group-vertical btn-group-sm" role="group">
-                                                <a href="{{ route('admin.reservations.show', $table->table_id) }}"
+                                                <a href="{{ $showUrl }}"
                                                     class="btn btn-info btn-sm mb-1">
                                                     <i class="fas fa-eye"></i> Chi tiết
                                                 </a>
 
                                                 @if (in_array($table->status, ['Đã đặt', 'Đến muộn']))
                                                     <form method="POST"
-                                                        action="{{ route('admin.reservations.checkin', $table->table_id) }}"
+                                                        action="{{ $checkinUrl }}"
                                                         class="d-inline">
                                                         @csrf
                                                         <button type="submit" class="btn btn-success btn-sm mb-1 w-100"
@@ -270,7 +282,7 @@
                                                     </form>
 
                                                     <form method="POST"
-                                                        action="{{ route('admin.reservations.cancel', $table->table_id) }}"
+                                                        action="{{ $cancelUrl }}"
                                                         class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
@@ -305,7 +317,7 @@
                         <i class="fas fa-search fa-3x text-muted mb-3"></i>
                         <h5 class="text-muted">Không tìm thấy đặt bàn nào</h5>
                         <p class="text-muted">Thử thay đổi điều kiện tìm kiếm hoặc xóa bộ lọc</p>
-                        <a href="{{ route('admin.reservations.index') }}" class="btn btn-primary">
+                        <a href="{{ $currentUrl }}" class="btn btn-primary">
                             <i class="fas fa-list"></i> Xem tất cả đặt bàn
                         </a>
                     </div>

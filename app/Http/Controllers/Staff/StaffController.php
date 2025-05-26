@@ -8,4 +8,5 @@ class StaffController extends Controller{
     {
         return view('staff.index'); // Đây là trang dashboard dành cho nhân viên
     }
+    
 }

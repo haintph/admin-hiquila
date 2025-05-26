@@ -21,13 +21,16 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $invoices = Invoice::with('table')->paginate(10);
+        // Lấy hóa đơn mới nhất (sắp xếp theo created_at giảm dần)
+        $invoices = Invoice::with('table')
+            ->orderBy('created_at', 'desc') // Sắp xếp theo ngày tạo mới nhất
+            ->paginate(10);
 
         // Tính toán số lượng hóa đơn theo trạng thái
         $totalInvoices = Invoice::count();
         $pendingInvoices = Invoice::whereIn('status', ['Đang chuẩn bị', 'Đã phục vụ'])->count();
         $paidInvoices = Invoice::where('status', 'Đã thanh toán')->count();
-        $completedInvoices = Invoice::where('status', 'Hoàn thành')->count(); // THÊM MỚI
+        $completedInvoices = Invoice::where('status', 'Hoàn thành')->count();
 
         return view('admin.invoices.index', compact(
             'invoices',

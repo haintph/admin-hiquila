@@ -13,15 +13,10 @@
     <meta name="author" content="Techzaa" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- jQuery (phải load đầu tiên) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-
     <!-- App favicon -->
     @include('admin.layouts.partials.style')
     <!-- Theme Config js (Require in all Page) -->
@@ -595,12 +590,12 @@
         <div class="main-nav">
             <!-- Sidebar Logo -->
             <div class="logo-box">
-                <a href="index.html" class="logo-dark">
+                <a href="{{ route('manager.index') }}" class="logo-dark">
                     <img src="/admin/assets/images/logo-sm.png" class="logo-sm" alt="logo sm">
                     <img src="/admin/assets/images/logo-dark.png" class="logo-lg" alt="logo dark">
                 </a>
 
-                <a href="dashboard" class="logo-light">
+                <a href="{{ route('manager.index') }}" class="logo-light">
                     <img src="/admin/assets/images/logo-sm.png" class="logo-sm" alt="logo sm">
                     <img src="/admin/assets/images/logo-light.png" class="logo-lg" alt="logo light">
                 </a>
@@ -615,431 +610,128 @@
             <div class="scrollbar" data-simplebar>
                 <ul class="navbar-nav" id="navbar-nav">
 
-                    @auth
-                        <!-- GENERAL SECTION - Available for all authenticated users -->
-                        <li class="menu-title">General</li>
+                    <!-- GENERAL SECTION -->
+                    <li class="menu-title">General</li>
 
-                        <!-- Dashboard - Different routes based on role -->
-                        <li class="nav-item">
-                            @if (auth()->user()->role === 'owner')
-                                <a class="nav-link" href="{{ route('admin.dashboard.index') }}">
-                                @elseif(auth()->user()->role === 'staff')
-                                    <a class="nav-link" href="{{ route('staff.index') }}">
-                                    @elseif(auth()->user()->role === 'chef')
-                                        <a class="nav-link" href="{{ route('chef.dashboard') }}">
-                                        @elseif(auth()->user()->role === 'customer')
-                                            <a class="nav-link" href="{{ route('customer.dashboard') }}">
-                                            @else
-                                                <a class="nav-link" href="{{ route('owner.dashboard') }}">
-                            @endif
+                    <!-- Dashboard -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('manager.index') }}">
                             <span class="nav-icon">
                                 <iconify-icon icon="solar:widget-5-bold-duotone"></iconify-icon>
                             </span>
                             <span class="nav-text"> Dashboard </span>
-                            </a>
-                        </li>
+                        </a>
+                    </li>
 
-                        <!-- Profile - Available for all authenticated users -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('profile') }}">
-                                <span class="nav-icon">
-                                    <iconify-icon icon="solar:user-bold-duotone"></iconify-icon>
-                                </span>
-                                <span class="nav-text"> Profile </span>
-                            </a>
-                        </li>
+                    <!-- Profile -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('profile') }}">
+                            <span class="nav-icon">
+                                <iconify-icon icon="solar:user-bold-duotone"></iconify-icon>
+                            </span>
+                            <span class="nav-text"> Profile </span>
+                        </a>
+                    </li>
 
-                        <!-- Chat - Available for all authenticated users -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('chat.index') }}">
-                                <span class="nav-icon">
-                                    <iconify-icon icon="solar:chat-round-bold-duotone"></iconify-icon>
-                                </span>
-                                <span class="nav-text"> Chat </span>
-                            </a>
-                        </li>
+                    <!-- Chat -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('chat.index') }}">
+                            <span class="nav-icon">
+                                <iconify-icon icon="solar:chat-round-bold-duotone"></iconify-icon>
+                            </span>
+                            <span class="nav-text"> Chat </span>
+                        </a>
+                    </li>
 
-                        <!-- OWNER ONLY SECTIONS -->
-                        @if (auth()->user()->role === 'owner')
-                            <!-- Product Management -->
-                            <li class="nav-item">
-                                <a class="nav-link menu-arrow" href="#sidebarProducts" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarProducts">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="maki:grocery"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Sản phẩm </span>
-                                </a>
-                                <div class="collapse" id="sidebarProducts">
-                                    <ul class="nav sub-navbar-nav">
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('dish_list') }}">Danh sách</a>
-                                        </li>
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('variant_list') }}">Biến thể</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+                    <!-- MANAGER FUNCTIONS -->
+                    <li class="menu-title mt-2">Quản lý</li>
 
-                            <!-- Category Management -->
-                            <li class="nav-item">
-                                <a class="nav-link menu-arrow" href="#sidebarCategory" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarCategory">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Danh mục </span>
-                                </a>
-                                <div class="collapse" id="sidebarCategory">
-                                    <ul class="nav sub-navbar-nav">
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('category-list') }}">Danh sách</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+                    <!-- Quản lý nhân sự / Chấm công -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('manager.attendance.list') }}">
+                            <span class="nav-icon">
+                                <iconify-icon icon="solar:calendar-mark-bold-duotone"></iconify-icon>
+                            </span>
+                            <span class="nav-text"> Chấm công </span>
+                        </a>
+                    </li>
 
-                            <!-- Sub Category Management -->
-                            <li class="nav-item">
-                                <a class="nav-link menu-arrow" href="#sidebarSubCategory" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarSubCategory">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="line-md:clipboard-list"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Danh mục con </span>
-                                </a>
-                                <div class="collapse" id="sidebarSubCategory">
-                                    <ul class="nav sub-navbar-nav">
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('sub_category_list') }}">Danh sách</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+                    <!-- Quản lý lương -->
+                    <li class="nav-item">
+                        <a class="nav-link menu-arrow" href="#sidebarSalary" data-bs-toggle="collapse"
+                            role="button" aria-expanded="false" aria-controls="sidebarSalary">
+                            <span class="nav-icon">
+                                <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
+                            </span>
+                            <span class="nav-text"> Quản lý lương </span>
+                        </a>
+                        <div class="collapse" id="sidebarSalary">
+                            <ul class="nav sub-navbar-nav">
+                                <li class="sub-nav-item">
+                                    <a class="sub-nav-link" href="{{ route('salary.settings') }}">Cài đặt</a>
+                                </li>
+                                <li class="sub-nav-item">
+                                    <a class="sub-nav-link" href="{{ route('salary.calculate') }}">Tính lương</a>
+                                </li>
+                                <li class="sub-nav-item">
+                                    <a class="sub-nav-link" href="{{ route('salary.history') }}">Lịch sử</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
 
-                            <!-- Area Management -->
-                            <li class="nav-item">
-                                <a class="nav-link menu-arrow" href="#sidebarAreas" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarAreas">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:card-send-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Quản lý khu vực </span>
-                                </a>
-                                <div class="collapse" id="sidebarAreas">
-                                    <ul class="nav sub-navbar-nav">
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('areas.index') }}">Danh sách</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+                    <!-- REPORTS & ANALYTICS (Có thể thêm sau) -->
+                    <li class="menu-title mt-2">Báo cáo</li>
 
-                            <!-- Table Management -->
-                            <li class="nav-item">
-                                <a class="nav-link menu-arrow" href="#sidebarTables" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarTables">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="mdi:table-chair"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Quản lý bàn </span>
-                                </a>
-                                <div class="collapse" id="sidebarTables">
-                                    <ul class="nav sub-navbar-nav">
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('tables.index') }}">Danh sách</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+                    <!-- Báo cáo nhân sự -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="alert('Chức năng sẽ được phát triển')">
+                            <span class="nav-icon">
+                                <iconify-icon icon="solar:chart-bold-duotone"></iconify-icon>
+                            </span>
+                            <span class="nav-text"> Báo cáo nhân sự </span>
+                        </a>
+                    </li>
 
-                            <!-- Reservation Management -->
-                            <li class="nav-item">
-                                <a class="nav-link menu-arrow" href="#sidebarReservations" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarReservations">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:bookmark-square-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Quản lý đặt bàn </span>
-                                </a>
-                                <div class="collapse" id="sidebarReservations">
-                                    <ul class="nav sub-navbar-nav">
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('admin.reservations.index') }}">Danh
-                                                sách đặt bàn</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+                    <!-- Báo cáo lương -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="alert('Chức năng sẽ được phát triển')">
+                            <span class="nav-icon">
+                                <iconify-icon icon="solar:document-text-bold-duotone"></iconify-icon>
+                            </span>
+                            <span class="nav-text"> Báo cáo lương </span>
+                        </a>
+                    </li>
 
-                            <!-- Invoice/Orders Management -->
-                            <li class="nav-item">
-                                <a class="nav-link menu-arrow" href="#sidebarInvoice" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarInvoice">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:bag-smile-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Quản lý đơn hàng </span>
-                                </a>
-                                <div class="collapse" id="sidebarInvoice">
-                                    <ul class="nav sub-navbar-nav">
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('invoices.index') }}">Danh sách</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+                    <!-- SETTINGS -->
+                    <li class="menu-title mt-2">Cài đặt</li>
 
-                            <!-- Inventory Management -->
-                            <li class="nav-item">
-                                <a class="nav-link menu-arrow" href="#sidebarInventory" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarInventory">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:box-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Quản lý kho </span>
-                                </a>
-                                <div class="collapse" id="sidebarInventory">
-                                    <ul class="nav sub-navbar-nav">
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('inventory.index') }}">Kho hàng</a>
-                                        </li>
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('supplier.index') }}">Nhà cung cấp</a>
-                                        </li>
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('purchase.index') }}">Mua hàng</a>
-                                        </li>
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('inventory_logs.index') }}">Lịch
-                                                sử</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+                    <!-- Cài đặt hệ thống -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="alert('Chức năng sẽ được phát triển')">
+                            <span class="nav-icon">
+                                <iconify-icon icon="solar:settings-bold-duotone"></iconify-icon>
+                            </span>
+                            <span class="nav-text"> Cài đặt </span>
+                        </a>
+                    </li>
 
-                            <!-- Staff Management -->
-                            <li class="menu-title mt-2">Quản lý nhân sự</li>
+                    <!-- LOGOUT SECTION -->
+                    <li class="menu-title mt-2">Khác</li>
 
-                            <li class="nav-item">
-                                <a class="nav-link menu-arrow" href="#sidebarUsers" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarUsers">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:user-speak-rounded-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Quản lý người dùng </span>
-                                </a>
-                                <div class="collapse" id="sidebarUsers">
-                                    <ul class="nav sub-navbar-nav">
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('user_list') }}">Danh sách</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-
-                            <!-- Attendance Management -->
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.attendance.list') }}">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:calendar-mark-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Chấm công </span>
-                                </a>
-                            </li>
-                        @endif
-
-                        <!-- MANAGER ONLY SECTIONS -->
-                        @if (auth()->user()->role === 'manager')
-                            <li class="menu-title mt-2">Quản lý</li>
-
-                            <!-- Attendance Management -->
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('manager.attendance.list') }}">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:calendar-mark-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Chấm công </span>
-                                </a>
-                            </li>
-
-                            <!-- Salary Management -->
-                            <li class="nav-item">
-                                <a class="nav-link menu-arrow" href="#sidebarSalary" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarSalary">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Quản lý lương </span>
-                                </a>
-                                <div class="collapse" id="sidebarSalary">
-                                    <ul class="nav sub-navbar-nav">
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('salary.settings') }}">Cài đặt</a>
-                                        </li>
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('salary.calculate') }}">Tính lương</a>
-                                        </li>
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('salary.history') }}">Lịch sử</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        @endif
-
-                        <!-- STAFF ONLY SECTIONS -->
-                        @if (auth()->user()->role === 'staff')
-                            <li class="menu-title mt-2">Nhân viên</li>
-
-                            <!-- Reservation Management -->
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('staff.reservations.index') }}">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:bookmark-square-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Đặt bàn </span>
-                                </a>
-                            </li>
-
-                            <!-- Invoice Management -->
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('staff.invoices.create') }}">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:bag-smile-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Tạo đơn hàng </span>
-                                </a>
-                            </li>
-                        @endif
-
-                        <!-- CHEF ONLY SECTIONS -->
-                        @if (auth()->user()->role === 'chef')
-                            <li class="menu-title mt-2">Bếp</li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('chef.dashboard') }}">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:chef-hat-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Đơn hàng bếp </span>
-                                </a>
-                            </li>
-                        @endif
-
-                        <!-- CUSTOMER ONLY SECTIONS -->
-                        @if (auth()->user()->role === 'customer')
-                            <li class="menu-title mt-2">Khách hàng</li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('customer.select-table') }}">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="mdi:table-chair"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Chọn bàn </span>
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('customer.reservations') }}">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:bookmark-square-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Đặt bàn của tôi </span>
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('customer.floor-plan') }}">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:map-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Sơ đồ tầng </span>
-                                </a>
-                            </li>
-                        @endif
-
-                        <!-- PAYMENT SECTION - Available for all users -->
-                        @if (in_array(auth()->user()->role, ['owner', 'staff', 'customer']))
-                            <li class="menu-title mt-2">Thanh toán</li>
-
-                            <li class="nav-item">
-                                <a class="nav-link menu-arrow" href="#sidebarPayment" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarPayment">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:card-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Thanh toán </span>
-                                </a>
-                                <div class="collapse" id="sidebarPayment">
-                                    <ul class="nav sub-navbar-nav">
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="#"
-                                                onclick="alert('VNPay Payment')">VNPay</a>
-                                        </li>
-                                        @if (auth()->user()->role === 'owner')
-                                            <li class="sub-nav-item">
-                                                <a class="sub-nav-link" href="#"
-                                                    onclick="alert('PayPal Payment')">PayPal</a>
-                                            </li>
-                                        @endif
-                                    </ul>
-                                </div>
-                            </li>
-                        @endif
-
-                        <!-- LOGOUT SECTION -->
-                        <li class="menu-title mt-2">Khác</li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="#"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                <span class="nav-icon">
-                                    <iconify-icon icon="solar:logout-2-bold-duotone"></iconify-icon>
-                                </span>
-                                <span class="nav-text"> Đăng xuất </span>
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                style="display: none;">
-                                @csrf
-                            </form>
-                        </li>
-                    @else
-                        <!-- GUEST SECTION - Show when not authenticated -->
-                        <li class="menu-title">Khách</li>
-
-                        <!-- Login -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">
-                                <span class="nav-icon">
-                                    <iconify-icon icon="solar:login-3-bold-duotone"></iconify-icon>
-                                </span>
-                                <span class="nav-text"> Đăng nhập </span>
-                            </a>
-                        </li>
-
-                        <!-- Information -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span class="nav-icon">
-                                    <iconify-icon icon="solar:info-circle-bold-duotone"></iconify-icon>
-                                </span>
-                                <span class="nav-text"> Thông tin </span>
-                            </a>
-                        </li>
-
-                        <!-- Contact -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span class="nav-icon">
-                                    <iconify-icon icon="solar:phone-bold-duotone"></iconify-icon>
-                                </span>
-                                <span class="nav-text"> Liên hệ </span>
-                            </a>
-                        </li>
-
-                    @endauth
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <span class="nav-icon">
+                                <iconify-icon icon="solar:logout-2-bold-duotone"></iconify-icon>
+                            </span>
+                            <span class="nav-text"> Đăng xuất </span>
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                            style="display: none;">
+                            @csrf
+                        </form>
+                    </li>
 
                 </ul>
             </div>
