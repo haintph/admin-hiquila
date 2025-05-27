@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\LogoController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ManagerController;
 use Illuminate\Support\Facades\Route;
@@ -113,7 +114,9 @@ Route::middleware(['auth'])->group(function () {
     // OWNER ROUTES
     // ===========================================
     Route::middleware(['role:owner'])->group(function () {
-
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::resource('logos', LogoController::class);
+        });
         // PayPal Routes
         Route::get('/paypal/payment/{invoice_id}', [PayPalController::class, 'createPayment'])->name('paypal.payment');
         Route::get('/paypal/success', [PayPalController::class, 'success'])->name('paypal.success');
@@ -277,10 +280,13 @@ Route::middleware(['auth'])->group(function () {
 
         // Staff Invoice Management
         Route::prefix('staff/invoices')->name('staff.invoices.')->group(function () {
+            Route::get('/{id}/payment', [StaffController::class, 'payment'])->name('payment');
             Route::get('/create', [StaffController::class, 'create'])->name('create');
             Route::post('/store', [StaffController::class, 'store'])->name('store');
             Route::get('/{id}/edit', [StaffController::class, 'edit'])->name('edit');
+            Route::patch('/{id}/quick-clean', [StaffController::class, 'quickClean'])->name('quick-clean');
             Route::post('/{id}/add-dish', [StaffController::class, 'addDish'])->name('addDish');
+            Route::patch('/{id}/finish', [StaffController::class, 'finishAndCleanTable'])->name('finish');
             Route::post('/{id}/add-dish-with-variant', [StaffController::class, 'addDishWithVariant'])->name('addDishWithVariant');
             Route::post('/{invoice}/send-to-kitchen', [StaffController::class, 'sendToKitchen'])->name('sendToKitchen');
             Route::post('/{id}/increase-item', [StaffController::class, 'increaseItem'])->name('increaseItem');
@@ -288,6 +294,7 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/{invoice_id}/items/{item_id}/remove', [StaffController::class, 'removeItem'])->name('removeItem');
             Route::get('/{id}/print', [StaffController::class, 'print'])->name('print');
             Route::delete('/{id}/delete', [StaffController::class, 'destroy'])->name('destroy');
+            Route::post('/{id}/checkout', [StaffController::class, 'checkout'])->name('checkout');
             Route::get('/check-payment/{invoice_id}', [StaffController::class, 'checkPayment'])->name('checkPayment');
         });
 

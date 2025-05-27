@@ -71,7 +71,7 @@ class AuthController extends Controller
     {
         try {
             return match ($user->role) {
-                'owner' => route('owner.dashboard'),          // /owner
+                'owner' => route('admin.dashboard.index'),          // /owner
                 'manager' => route('manager.attendance.list'), // /manager/attendance
                 'staff' => route('staff.index'),               // /staff
                 'chef' => route('chef.dashboard'),             // /chef

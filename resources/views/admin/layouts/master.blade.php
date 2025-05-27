@@ -213,55 +213,47 @@
                         @if (Auth::check())
                             <!-- Nếu đã đăng nhập -->
                             <div class="dropdown topbar-item">
-                                {{-- <a type="button" class="topbar-button" id="page-header-user-dropdown"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="d-flex align-items-center">
-                                    <img class="rounded-circle" width="40"
-                                        src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('/admin/assets/images/users/avatar-1.jpg') }}"
-                                        alt="avatar">
-                                </span>
-                            </a> --}}
                                 <a type="button" class="topbar-button" id="page-header-user-dropdown"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="d-flex align-items-center">
                                         <img class="rounded-circle user-avatar" width="32"
-                                            src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('/admin/assets/images/users/avatar-1.jpg') }}"
+                                            src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRTVFN0VCIi8+CjxjaXJjbGUgY3g9IjUwIiBjeT0iMzciIHI9IjE4IiBmaWxsPSIjOUM5Q0EzIi8+CjxwYXRoIGQ9Ik0yMCA4MEM3My45MSA0OC44NSA5MS42NiA0OC44NSA4MCA4MEwyMCA4MFoiIGZpbGw9IiM5QzlDQTMiLz4KPC9zdmc+' }}"
                                             alt="avatar">
                                     </span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end">
-                                    <h6 class="dropdown-header">Welcome, {{ Auth::user()->name }}!</h6>
+                                    <h6 class="dropdown-header">Chào mừng, {{ Auth::user()->name }}!</h6>
                                     <a class="dropdown-item" href="{{ route('profile') }}">
                                         <i class="fa-solid fa-user text-muted fs-18 align-middle me-1"></i>
-                                        <span class="align-middle">Profile</span>
+                                        <span class="align-middle">Hồ sơ</span>
                                     </a>
 
                                     <a class="dropdown-item" href="{{ route('chat.index') }}">
                                         <i class="bx bx-message-dots text-muted fs-18 align-middle me-1"></i><span
-                                            class="align-middle">Messages</span>
+                                            class="align-middle">Tin nhắn</span>
                                     </a>
 
                                     <a class="dropdown-item" href="pages-pricing.html">
                                         <i class="bx bx-wallet text-muted fs-18 align-middle me-1"></i><span
-                                            class="align-middle">Pricing</span>
+                                            class="align-middle">Bảng giá</span>
                                     </a>
 
                                     <a class="dropdown-item" href="pages-faqs.html">
                                         <i class="bx bx-help-circle text-muted fs-18 align-middle me-1"></i><span
-                                            class="align-middle">Help</span>
+                                            class="align-middle">Trợ giúp</span>
                                     </a>
 
                                     <a class="dropdown-item" href="{{ route('profile.changePassword') }}">
                                         <i class="bx bx-lock text-muted fs-18 align-middle me-1"></i><span
-                                            class="align-middle">Change Password</span>
+                                            class="align-middle">Đổi mật khẩu</span>
                                     </a>
                                     <div class="dropdown-divider my-1"></div>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
                                         <button type="submit" class="dropdown-item text-danger">
                                             <i class="fa-solid fa-right-from-bracket fs-18 align-middle me-1"></i>
-                                            <span class="align-middle">Logout</span>
+                                            <span class="align-middle">Đăng xuất</span>
                                         </button>
                                     </form>
                                 </div>
@@ -272,17 +264,18 @@
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="d-flex align-items-center">
                                         <img class="rounded-circle" width="32"
-                                            src="/admin/assets/images/users/avatar-1.jpg" alt="avatar-3">
+                                            src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRTVFN0VCIi8+CjxjaXJjbGUgY3g9IjUwIiBjeT0iMzciIHI9IjE4IiBmaWxsPSIjOUM5Q0EzIi8+CjxwYXRoIGQ9Ik0yMCA4MEM3My45MSA0OC44NSA5MS42NiA0OC44NSA4MCA4MEwyMCA4MFoiIGZpbGw9IiM5QzlDQTMiLz4KPC9zdmc+"
+                                            alt="default-avatar">
                                     </span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <!-- item-->
-                                    <h6 class="dropdown-header">Khách hàng truy cập chưa đăng nhập!</h6>
+                                    <h6 class="dropdown-header">Khách hàng chưa đăng nhập!</h6>
                                     <div class="dropdown-divider my-1"></div>
 
                                     <a class="dropdown-item text-success" href="{{ route('login') }}">
                                         <i class="bx bx-log-in fs-18 align-middle me-1"></i>
-                                        <span class="align-middle">Login</span>
+                                        <span class="align-middle">Đăng nhập</span>
                                     </a>
                                 </div>
                             </div>
@@ -595,16 +588,25 @@
         <div class="main-nav">
             <!-- Sidebar Logo -->
             <div class="logo-box">
+                {{-- Logo cho dark theme (giữ nguyên) --}}
                 <a href="index.html" class="logo-dark">
                     <img src="/admin/assets/images/logo-sm.png" class="logo-sm" alt="logo sm">
                     <img src="/admin/assets/images/logo-dark.png" class="logo-lg" alt="logo dark">
                 </a>
 
+                {{-- FOREACH HIỂN THỊ TẤT CẢ LOGO --}}
                 <a href="dashboard" class="logo-light">
-                    <img src="/admin/assets/images/logo-sm.png" class="logo-sm" alt="logo sm">
-                    <img src="/admin/assets/images/logo-light.png" class="logo-lg" alt="logo light">
+                    @php
+                        $logos = App\Models\Logo::all(); // Lấy tất cả logo
+                    @endphp
+
+                    @foreach ($logos as $logo)
+                        <img src="{{ $logo->image_url }}" class="logo-lg custom-logo-lg"
+                            alt="logo {{ $logo->id }}" style="width: 100%;">
+                    @endforeach
                 </a>
             </div>
+
 
             <!-- Menu Toggle Button (sm-hover) -->
             <button type="button" class="button-sm-hover" aria-label="Show Full Sidebar">
@@ -661,6 +663,14 @@
 
                         <!-- OWNER ONLY SECTIONS -->
                         @if (auth()->user()->role === 'owner')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.logos.index') }}">
+                                    <span class="nav-icon">
+                                        <iconify-icon icon="solar:gallery-bold-duotone"></iconify-icon>
+                                    </span>
+                                    <span class="nav-text"> Quản lý Logo </span>
+                                </a>
+                            </li>
                             <!-- Product Management -->
                             <li class="nav-item">
                                 <a class="nav-link menu-arrow" href="#sidebarProducts" data-bs-toggle="collapse"

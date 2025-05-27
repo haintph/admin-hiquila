@@ -630,7 +630,7 @@
                             <button onclick="printInvoice()" class="btn-invoice btn-print">
                                 <i class="fas fa-print"></i> In Hóa Đơn
                             </button>
-                            <a href="{{ route('invoices.index') }}" class="btn-invoice btn-secondary">
+                            <a href="{{ route('staff.index') }}" class="btn-invoice btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Quay Lại
                             </a>
                         </div>

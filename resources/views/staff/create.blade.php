@@ -57,7 +57,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('invoices.store') }}" method="POST" id="invoiceForm">
+                <form action="{{ route('staff.invoices.store') }}" method="POST" id="invoiceForm">
                     @csrf
                     
                     <!-- Thông tin khách hàng -->
@@ -127,7 +127,7 @@
                         <h5 class="mb-3">Chọn Tầng</h5>
                         <div class="btn-group" role="group" aria-label="Chọn tầng">
                             @foreach ($floors as $floor)
-                                <a href="{{ route('invoices.create', ['floor' => $floor]) }}" 
+                                <a href="{{ route('staff.invoices.create', ['floor' => $floor]) }}" 
                                    class="btn {{ $floor == $selectedFloor ? 'btn-primary' : 'btn-outline-primary' }}">
                                     Tầng {{ $floor }}
                                 </a>
@@ -141,7 +141,7 @@
                         <div class="row g-3">
                             @foreach ($areas as $area)
                                 <div class="col-md-4">
-                                    <a href="{{ route('invoices.create', ['floor' => $selectedFloor, 'area_id' => $area->area_id]) }}"
+                                    <a href="{{ route('staff.invoices.create', ['floor' => $selectedFloor, 'area_id' => $area->area_id]) }}"
                                         class="text-decoration-none">
                                         <div class="card {{ $area->area_id == $area_id ? 'border-primary bg-light' : 'border-secondary' }}">
                                             <div class="card-body text-center">
@@ -241,7 +241,7 @@
                         <button type="submit" class="btn btn-primary btn-lg">
                             <i class="fas fa-plus me-2"></i>Tạo Hóa Đơn
                         </button>
-                        <a href="{{ route('invoices.index') }}" class="btn btn-secondary btn-lg ms-3">
+                        <a href="{{ route('staff.index') }}" class="btn btn-secondary btn-lg ms-3">
                             <i class="fas fa-arrow-left me-2"></i>Quay lại
                         </a>
                     </div>

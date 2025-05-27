@@ -249,7 +249,7 @@
             <div class="col-lg-10">
                 <!-- Nút quay lại -->
                 <div class="mb-4">
-                    <a href="{{ route('invoices.edit', $invoice->invoice_id) }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('staff.invoices.edit', $invoice->invoice_id) }}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-2"></i>Quay lại đặt món
                     </a>
                 </div>
@@ -365,7 +365,7 @@
                                     </a>
 
                                     <!-- Tiền mặt - CHỈ ĐỔI THÀNH FORM POST -->
-                                    <form action="{{ route('invoices.checkout', $invoice->invoice_id) }}" method="POST"
+                                    <form action="{{ route('staff.invoices.checkout', $invoice->invoice_id) }}" method="POST"
                                         style="display: inline-block; width: 100%;">
                                         @csrf
                                         <button type="submit"
@@ -387,7 +387,7 @@
 
                                 <!-- In hóa đơn -->
                                 <div class="d-grid">
-                                    <a href="{{ route('invoices.print', $invoice->invoice_id) }}"
+                                    <a href="{{ route('staff.invoices.print', $invoice->invoice_id) }}"
                                         class="btn btn-outline-secondary" target="_blank">
                                         <i class="fas fa-print me-2"></i>In hóa đơn
                                     </a>
@@ -492,7 +492,7 @@
             // Kiểm tra trạng thái thanh toán mỗi 5 giây
             let checkPaymentStatus = function() {
                 $.ajax({
-                    url: "{{ route('invoices.checkPayment', $invoice->invoice_id) }}",
+                    url: "{{ route('staff.invoices.checkPayment', $invoice->invoice_id) }}",
                     type: "GET",
                     success: function(data) {
                         if (data.paid) {
@@ -500,7 +500,7 @@
                             toastr.success("Thanh toán thành công!");
 
                             setTimeout(function() {
-                                window.location.href = "{{ route('invoices.index') }}";
+                                window.location.href = "{{ route('staff.index') }}";
                             }, 3000);
                         }
                     }

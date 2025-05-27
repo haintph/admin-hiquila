@@ -143,7 +143,7 @@ class Invoice extends Model
     {
         return $query->where(function ($q) use ($search) {
             $q->where('customer_name', 'like', "%{$search}%")
-              ->orWhere('customer_phone', 'like', "%{$search}%");
+                ->orWhere('customer_phone', 'like', "%{$search}%");
         });
     }
 
@@ -234,19 +234,19 @@ class Invoice extends Model
     public function getCustomerInfoAttribute()
     {
         $info = [];
-        
+
         if ($this->customer_name) {
             $info[] = $this->customer_name;
         }
-        
+
         if ($this->customer_phone) {
             $info[] = $this->customer_phone;
         }
-        
+
         if ($this->party_size) {
             $info[] = $this->party_size . ' khách';
         }
-        
+
         return !empty($info) ? implode(' - ', $info) : 'Khách lẻ';
     }
 
@@ -365,5 +365,22 @@ class Invoice extends Model
             'can_cancel' => $this->canCancel(),
             'can_pay' => $this->canPay()
         ];
+    }
+    /**
+     * Lấy các món chưa gửi bếp (pending)
+     */
+    public function pendingItems()
+    {
+        return $this->hasMany(InvoiceDetail::class, 'invoice_id', 'invoice_id')
+            ->whereNull('sent_to_kitchen_at');
+    }
+
+    /**
+     * Lấy các món đã gửi bếp (sent)
+     */
+    public function sentItems()
+    {
+        return $this->hasMany(InvoiceDetail::class, 'invoice_id', 'invoice_id')
+            ->whereNotNull('sent_to_kitchen_at');
     }
 }

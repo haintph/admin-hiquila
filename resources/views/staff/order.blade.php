@@ -196,7 +196,7 @@
     <div class="container-fluid">
         <!-- Back button to invoices.index -->
         <div class="mb-3">
-            <a href="{{ route('invoices.index') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('staff.index') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
             </a>
         </div>
@@ -218,7 +218,7 @@
                     <!-- Chi tiết món ăn và biến thể -->
                     <div class="card shadow-sm mb-4 dish-detail-card">
                         <div class="position-relative">
-                            <a href="{{ route('invoices.edit', $invoice->invoice_id) }}" class="back-to-menu">
+                            <a href="{{ route('staff.invoices.edit', $invoice->invoice_id) }}" class="back-to-menu">
                                 <i class="fas fa-arrow-left"></i>
                             </a>
                             <img width="100"
@@ -242,7 +242,7 @@
 
                             @if ($selected_dish->variants->count() > 0)
                                 <h5 class="mt-4 mb-3">Tùy chọn thêm</h5>
-                                <form action="{{ route('invoices.addDishWithVariant', $invoice->invoice_id) }}"
+                                <form action="{{ route('staff.invoices.addDishWithVariant', $invoice->invoice_id) }}"
                                     method="POST">
                                     @csrf
                                     <input type="hidden" name="dish_id" value="{{ $selected_dish->id }}">
@@ -308,7 +308,7 @@
                                     @endif
                                 </form>
                             @else
-                                <form action="{{ route('invoices.addDish', $invoice->invoice_id) }}" method="POST"
+                                <form action="{{ route('staff.invoices.addDish', $invoice->invoice_id) }}" method="POST"
                                     class="mt-4">
                                     @csrf
                                     <input type="hidden" name="dish_id" value="{{ $selected_dish->id }}">
@@ -339,7 +339,7 @@
 
                                 <div class="d-flex align-items-center">
                                     <!-- Tìm kiếm món ăn sử dụng form -->
-                                    <form action="{{ route('invoices.edit', $invoice->invoice_id) }}" method="GET"
+                                    <form action="{{ route('staff.invoices.edit', $invoice->invoice_id) }}" method="GET"
                                         class="me-2">
                                         <div class="position-relative">
                                             <input type="text" name="search" class="form-control dish-search"
@@ -355,7 +355,7 @@
 
                             <!-- Danh mục món ăn -->
                             <div class="category-nav d-flex mb-4">
-                                <a href="{{ route('invoices.edit', $invoice->invoice_id) }}"
+                                <a href="{{ route('staff.invoices.edit', $invoice->invoice_id) }}"
                                     class="text-decoration-none">
                                     <span
                                         class="category-badge badge {{ !request('category') ? 'bg-primary' : 'bg-light text-dark' }} me-2 px-3 py-2">
@@ -364,7 +364,7 @@
                                 </a>
                                 @if (isset($categories) && count($categories) > 0)
                                     @foreach ($categories as $category)
-                                        <a href="{{ route('invoices.edit', ['id' => $invoice->invoice_id, 'category' => $category->id]) }}"
+                                        <a href="{{ route('staff.invoices.edit', ['id' => $invoice->invoice_id, 'category' => $category->id]) }}"
                                             class="text-decoration-none">
                                             <span
                                                 class="category-badge badge {{ request('category') == $category->id ? 'bg-primary' : 'bg-light text-dark' }} me-2 px-3 py-2">
@@ -378,7 +378,7 @@
                             <!-- Danh mục con -->
                             @if (request('category') && isset($subcategories) && count($subcategories) > 0)
                                 <div class="d-flex flex-wrap mb-4 subcategory-container">
-                                    <a href="{{ route('invoices.edit', ['id' => $invoice->invoice_id, 'category' => request('category')]) }}"
+                                    <a href="{{ route('staff.invoices.edit', ['id' => $invoice->invoice_id, 'category' => request('category')]) }}"
                                         class="text-decoration-none me-2 mb-2">
                                         <div
                                             class="subcategory-item {{ !request('subcategory') ? 'active' : '' }} px-3 py-2 rounded text-center">
@@ -387,7 +387,7 @@
                                         </div>
                                     </a>
                                     @foreach ($subcategories as $subcategory)
-                                        <a href="{{ route('invoices.edit', ['id' => $invoice->invoice_id, 'category' => request('category'), 'subcategory' => $subcategory->id]) }}"
+                                        <a href="{{ route('staff.invoices.edit', ['id' => $invoice->invoice_id, 'category' => request('category'), 'subcategory' => $subcategory->id]) }}"
                                             class="text-decoration-none me-2 mb-2">
                                             <div class="subcategory-item {{ request('subcategory') == $subcategory->id ? 'active' : '' }} px-3 py-2 rounded text-center"
                                                 style="min-width: 120px;">
@@ -433,13 +433,13 @@
                                             <div class="card-footer bg-white border-top-0">
                                                 @if ($dish->available_stock > 0 && $dish->is_available)
                                                     @if ($dish->variants->count() > 0)
-                                                        <a href="{{ route('invoices.edit', ['id' => $invoice->invoice_id, 'dish' => $dish->id]) }}"
+                                                        <a href="{{ route('staff.invoices.edit', ['id' => $invoice->invoice_id, 'dish' => $dish->id]) }}"
                                                             class="btn btn-primary w-100">
                                                             <i class="fas fa-list-ul me-1"></i> Chọn tùy chọn
                                                         </a>
                                                     @else
                                                         <form
-                                                            action="{{ route('invoices.addDish', $invoice->invoice_id) }}"
+                                                            action="{{ route('staff.invoices.addDish', $invoice->invoice_id) }}"
                                                             method="POST"
                                                             class="d-flex justify-content-between align-items-center">
                                                             @csrf
@@ -623,7 +623,7 @@
                                                                     class="d-flex align-items-center justify-content-center">
                                                                     <!-- Nút giảm -->
                                                                     <form
-                                                                        action="{{ route('invoices.decreaseItem', $invoice->invoice_id) }}"
+                                                                        action="{{ route('staff.invoices.decreaseItem', $invoice->invoice_id) }}"
                                                                         method="POST" class="me-1">
                                                                         @csrf
                                                                         <input type="hidden" name="detail_id"
@@ -645,7 +645,7 @@
 
                                                                     <!-- Nút tăng -->
                                                                     <form
-                                                                        action="{{ route('invoices.increaseItem', $invoice->invoice_id) }}"
+                                                                        action="{{ route('staff.invoices.increaseItem', $invoice->invoice_id) }}"
                                                                         method="POST" class="ms-1">
                                                                         @csrf
                                                                         <input type="hidden" name="detail_id"
@@ -677,7 +677,7 @@
 
                                                             <td class="align-middle px-2">
                                                                 <form
-                                                                    action="{{ route('invoices.removeItem', ['invoice_id' => $invoice->invoice_id, 'item_id' => $item->detail_id]) }}"
+                                                                    action="{{ route('staff.invoices.removeItem', ['invoice_id' => $invoice->invoice_id, 'item_id' => $item->detail_id]) }}"
                                                                     method="POST">
                                                                     @csrf
                                                                     @method('DELETE')
@@ -767,7 +767,7 @@
                                 <!-- Nút hành động -->
                                 @if ($invoice->pendingItems && $invoice->pendingItems->count() > 0)
                                     <div class="d-grid">
-                                        <form action="{{ route('invoices.sendToKitchen', $invoice->invoice_id) }}"
+                                        <form action="{{ route('staff.invoices.sendToKitchen', $invoice->invoice_id) }}"
                                             method="POST">
                                             @csrf
                                             <button type="submit" class="btn btn-success w-100 order-complete-btn"

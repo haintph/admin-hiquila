@@ -82,7 +82,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="card-title mb-0">Danh sách hóa đơn</h4>
-                <a href="{{ route('invoices.create') }}" class="btn btn-primary">
+                <a href="{{ route('staff.invoices.create') }}" class="btn btn-primary">
                     <iconify-icon icon="solar:add-circle-bold-duotone" class="me-1"></iconify-icon>Đặt bàn
                 </a>
             </div>
@@ -195,20 +195,20 @@
                                         <div class="d-flex gap-1">
                                             @if ($invoice->status != 'Đã thanh toán' && $invoice->status != 'Hoàn thành')
                                                 <!-- Hóa đơn chưa thanh toán -->
-                                                <a href="{{ route('invoices.edit', $invoice->invoice_id) }}"
+                                                <a href="{{ route('staff.invoices.edit', $invoice->invoice_id) }}"
                                                     class="btn btn-warning btn-sm">
                                                     <iconify-icon icon="solar:pen-bold-duotone"></iconify-icon> Order
                                                 </a>
 
                                                 @if ($invoice->status == 'Đã phục vụ' && $invoice->total_price > 0)
                                                     @if (auth()->user()->role === 'owner')
-                                                        <a href="{{ route('invoices.payment', $invoice->invoice_id) }}"
+                                                        <a href="{{ route('staff.invoices.payment', $invoice->invoice_id) }}"
                                                             class="btn btn-success btn-sm">
                                                             <iconify-icon icon="solar:card-bold-duotone"></iconify-icon>
                                                             Thanh toán
                                                         </a>
                                                     @elseif (auth()->user()->role === 'staff')
-                                                        <a href="{{ route('staff.payment', $invoice->invoice_id) }}"
+                                                        <a href="{{ route('staff.invoices.payment', $invoice->invoice_id) }}"
                                                             class="btn btn-success btn-sm">
                                                             <iconify-icon icon="solar:card-bold-duotone"></iconify-icon>
                                                             Thanh toán
@@ -217,7 +217,7 @@
                                                 @endif
 
                                                 @if ($invoice->total_price == 0)
-                                                    <form action="{{ route('invoices.destroy', $invoice->invoice_id) }}"
+                                                    <form action="{{ route('staff.invoices.destroy', $invoice->invoice_id) }}"
                                                         method="POST" class="d-inline">
                                                         @csrf @method('DELETE')
                                                         <button type="submit" class="btn btn-danger btn-sm"
@@ -230,12 +230,12 @@
                                                 @endif
                                             @elseif($invoice->status == 'Đã thanh toán')
                                                 <!-- Hóa đơn đã thanh toán - có thể in và hoàn tất -->
-                                                <a href="{{ route('invoices.print', $invoice->invoice_id) }}"
+                                                <a href="{{ route('staff.invoices.print', $invoice->invoice_id) }}"
                                                     class="btn btn-primary btn-sm" target="_blank">
-                                                    <iconify-icon icon="solar:printer-bold-duotone"></iconify-icon> In
+                                                    <iconify-icon icon="solar:printer-bold-duotone"></iconify-icon> Chi tiết
                                                 </a>
 
-                                                <form action="{{ route('invoices.finish', $invoice->invoice_id) }}"
+                                                <form action="{{ route('staff.invoices.finish', $invoice->invoice_id) }}"
                                                     method="POST" class="d-inline">
                                                     @csrf @method('PATCH')
                                                     <button type="submit" class="btn btn-success btn-sm"
@@ -247,9 +247,9 @@
                                                 </form>
                                             @else
                                                 <!-- Hóa đơn đã hoàn thành -->
-                                                <a href="{{ route('invoices.print', $invoice->invoice_id) }}"
+                                                <a href="{{ route('staff.invoices.print', $invoice->invoice_id) }}"
                                                     class="btn btn-outline-primary btn-sm" target="_blank">
-                                                    <iconify-icon icon="solar:printer-bold-duotone"></iconify-icon> In lại
+                                                    <iconify-icon icon="solar:printer-bold-duotone"></iconify-icon> Chi tiết
                                                 </a>
                                                 <span class="badge bg-success">
                                                     <iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Đã
