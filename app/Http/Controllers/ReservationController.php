@@ -143,14 +143,17 @@ class ReservationController extends Controller
             $table = Table::findOrFail($tableId);
 
             if (!in_array($table->status, ['Đã đặt', 'Đến muộn'])) {
-                return back()->with('error', 'Bàn này không thể hủy.');
+                return redirect()->route('admin.reservationss.index')
+                    ->with('error', 'Bàn này không thể hủy.');
             }
 
             $table->cancelReservation();
 
-            return back()->with('success', "Đã hủy đặt bàn {$table->table_number}");
+            return redirect()->route('staff.reservations.index')
+                ->with('success', "Đã hủy đặt bàn {$table->table_number}");
         } catch (\Exception $e) {
-            return back()->with('error', 'Có lỗi xảy ra khi hủy đặt bàn.');
+            return redirect()->route('staff.reservation.index')
+                ->with('error', 'Có lỗi xảy ra khi hủy đặt bàn.');
         }
     }
 

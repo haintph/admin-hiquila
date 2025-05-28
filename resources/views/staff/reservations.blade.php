@@ -265,25 +265,25 @@
                                                 $cancelUrl = "/staff/reservations/{$table->table_id}/cancel";
                                             @endphp
                                             <div class="btn-group-vertical btn-group-sm" role="group">
-                                                <a href="{{ $showUrl }}"
-                                                    class="btn btn-info btn-sm mb-1">
+                                                <!-- Nút Chi tiết - luôn hiển thị -->
+                                                <a href="{{ $showUrl }}" class="btn btn-info btn-sm mb-1">
                                                     <i class="fas fa-eye"></i> Chi tiết
                                                 </a>
 
-                                                @if (in_array($table->status, ['Đã đặt', 'Đến muộn']))
-                                                    <form method="POST"
-                                                        action="{{ $checkinUrl }}"
-                                                        class="d-inline">
+                                                <!-- Nút Check-in - chỉ hiển thị khi trạng thái "Đã đặt" -->
+                                                @if ($table->status == 'Đã đặt')
+                                                    <form method="POST" action="{{ $checkinUrl }}" class="d-inline">
                                                         @csrf
                                                         <button type="submit" class="btn btn-success btn-sm mb-1 w-100"
                                                             onclick="return confirm('Xác nhận check-in khách hàng?')">
                                                             <i class="fas fa-check"></i> Check-in
                                                         </button>
                                                     </form>
+                                                @endif
 
-                                                    <form method="POST"
-                                                        action="{{ $cancelUrl }}"
-                                                        class="d-inline">
+                                                <!-- Nút Hủy - hiển thị cho cả "Đã đặt" và "Đến muộn" -->
+                                                @if (in_array($table->status, ['Đã đặt', 'Đến muộn']))
+                                                    <form method="POST" action="{{ $cancelUrl }}" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-danger btn-sm w-100"
@@ -291,6 +291,13 @@
                                                             <i class="fas fa-times"></i> Hủy
                                                         </button>
                                                     </form>
+                                                @endif
+
+                                                <!-- Thêm thông báo cho trạng thái "Đến muộn" -->
+                                                @if ($table->status == 'Đến muộn')
+                                                    <small class="text-danger mt-1 d-block text-center">
+                                                        <i class="fas fa-clock"></i> Đã đến muộn
+                                                    </small>
                                                 @endif
                                             </div>
                                         </td>

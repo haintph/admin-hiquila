@@ -270,7 +270,9 @@ Route::middleware(['auth'])->group(function () {
 
         // Staff Dashboard
         Route::get('/staff', [StaffController::class, 'index'])->name('staff.index');
-
+        // VNPay Routes
+        Route::get('/vnpay-payment/{invoice_id}', [StaffController::class, 'createPayment'])->name('vnpay.payment');
+        Route::get('/vnpay-return', [StaffController::class, 'vnpayReturn'])->name('vnpay.return');
         // Staff Reservation Management
         Route::prefix('staff/reservations')->name('staff.reservations.')->group(function () {
             Route::get('/', [StaffController::class, 'dash'])->name('index');

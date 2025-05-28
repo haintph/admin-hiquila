@@ -12,17 +12,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Kiểm tra đến muộn mỗi 5 phút trong giờ hoạt động
+        // Kiểm tra đến muộn mỗi 5 phút - chạy 24/7
         $schedule->command('tables:check-late')
                  ->everyFiveMinutes()
-                 ->between('08:00', '23:59')
                  ->appendOutputTo(storage_path('logs/late-arrivals.log'));
 
-        // Hoặc nếu muốn chạy 24/7:
-        // $schedule->command('tables:check-late')->everyFiveMinutes();
-
-        // Có thể thêm các schedule khác cho dự án:
-        // $schedule->command('tables:cleanup-old-reservations')->daily();
+        // Tự động hủy đặt bàn quá hạn mỗi 30 phút - chạy 24/7  
+        $schedule->command('reservations:auto-cancel --hours=2')
+                 ->everyThirtyMinutes()
+                 ->appendOutputTo(storage_path('logs/auto-cancel.log'));
     }
 
     /**
