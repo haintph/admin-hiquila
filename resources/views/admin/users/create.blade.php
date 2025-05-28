@@ -1,15 +1,20 @@
 @extends('admin.layouts.master')
 
 @section('content')
-
     <div class="container-xxl">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show m-3">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
         <!-- Tiêu đề trang -->
         <div class="row mb-4">
             <div class="col-12">
                 <h3 class="mb-0">Thêm Nhân Viên</h3>
             </div>
         </div>
-        
+
         <form action="{{ route('user_store') }}" method="post" enctype="multipart/form-data">
             @csrf
             <div class="card">
@@ -22,8 +27,10 @@
                         <div class="col-lg-4 text-center">
                             <div class="mb-3">
                                 <label>Ảnh đại diện</label>
-                                <input type="file" name="avatar" id="avatar" class="form-control" onchange="previewImage(event)">
-                                <img id="imagePreview" src="" alt="Image Preview" class="mt-2" style="max-width: 250px; display: none;">
+                                <input type="file" name="avatar" id="avatar" class="form-control"
+                                    onchange="previewImage(event)">
+                                <img id="imagePreview" src="" alt="Image Preview" class="mt-2"
+                                    style="max-width: 250px; display: none;">
                             </div>
                         </div>
                         <!-- Cột bên phải: Các trường thông tin -->
@@ -31,19 +38,24 @@
                             <table class="table table-borderless">
                                 <tr>
                                     <th style="width: 30%;">Họ và tên</th>
-                                    <td><input type="text" name="name" class="form-control" placeholder="Nhập họ và tên" required></td>
+                                    <td><input type="text" name="name" class="form-control"
+                                            placeholder="Nhập họ và tên" required></td>
                                 </tr>
                                 <tr>
                                     <th>Email</th>
-                                    <td><input type="email" name="email" class="form-control" placeholder="Nhập email" required></td>
+                                    <td><input type="email" name="email" class="form-control" placeholder="Nhập email"
+                                            required></td>
                                 </tr>
                                 <tr>
                                     <th>Số điện thoại</th>
-                                    <td><input type="text" name="phone" class="form-control" placeholder="Nhập số điện thoại"></td>
+                                    <td><input type="text" name="phone" class="form-control"
+                                            placeholder="Nhập số điện thoại"></td>
                                 </tr>
                                 <tr>
                                     <th>Địa chỉ</th>
-                                    <td><textarea name="address" class="form-control" rows="2" placeholder="Nhập địa chỉ"></textarea></td>
+                                    <td>
+                                        <textarea name="address" class="form-control" rows="2" placeholder="Nhập địa chỉ"></textarea>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>Chức vụ</th>
@@ -73,10 +85,10 @@
                                     <th>Ngày sinh</th>
                                     <td><input type="date" name="dob" class="form-control"></td>
                                 </tr>
-                                <tr>
+                                {{-- <tr>
                                     <th>Lương</th>
                                     <td><input type="number" name="salary" class="form-control" placeholder="Nhập lương" required></td>
-                                </tr>
+                                </tr> --}}
                                 <tr>
                                     <th>Ngày vào làm</th>
                                     <td><input type="date" name="hire_date" class="form-control" required></td>
@@ -93,7 +105,8 @@
                                 </tr>
                                 <tr>
                                     <th>Mật khẩu</th>
-                                    <td><input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu" required></td>
+                                    <td><input type="password" name="password" class="form-control"
+                                            placeholder="Nhập mật khẩu" required></td>
                                 </tr>
                             </table>
                         </div>
@@ -137,11 +150,12 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12 text-center">
-                        <script>document.write(new Date().getFullYear())</script> &copy; Larkon.
+                        <script>
+                            document.write(new Date().getFullYear())
+                        </script> &copy; Larkon.
                     </div>
                 </div>
             </div>
         </footer>
     </div>
-
 @endsection

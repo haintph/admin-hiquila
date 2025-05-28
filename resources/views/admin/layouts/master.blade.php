@@ -601,8 +601,8 @@
                     @endphp
 
                     @foreach ($logos as $logo)
-                        <img src="{{ $logo->image_url }}" class="logo_customer"
-                            alt="logo {{ $logo->id }}" style="">
+                        <img src="{{ $logo->image_url }}" class="logo_customer" alt="logo {{ $logo->id }}"
+                            style="">
                     @endforeach
                 </a>
             </div>
@@ -850,14 +850,32 @@
                             </li>
 
                             <!-- Attendance Management -->
-                            {{-- <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.attendance.list') }}">
+                            <!-- Attendance Management -->
+                            <li class="nav-item">
+                                <a class="nav-link menu-arrow" href="#sidebarSalary" data-bs-toggle="collapse"
+                                    role="button" aria-expanded="false" aria-controls="sidebarSalary">
                                     <span class="nav-icon">
-                                        <iconify-icon icon="solar:calendar-mark-bold-duotone"></iconify-icon>
+                                        <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
                                     </span>
-                                    <span class="nav-text"> Chấm công </span>
+                                    <span class="nav-text"> Quản lý lương </span>
                                 </a>
-                            </li> --}}
+                                <div class="collapse" id="sidebarSalary">
+                                    <ul class="nav sub-navbar-nav">
+                                        <li class="sub-nav-item">
+                                            <a class="sub-nav-link" href="{{ route('admin.salary.settings') }}">Cài
+                                                đặt</a>
+                                        </li>
+                                        <li class="sub-nav-item">
+                                            <a class="sub-nav-link" href="{{ route('admin.salary.calculate') }}">Tính
+                                                lương</a>
+                                        </li>
+                                        <li class="sub-nav-item">
+                                            <a class="sub-nav-link" href="{{ route('admin.salary.history') }}">Lịch
+                                                sử</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
                         @endif
 
                         <!-- MANAGER ONLY SECTIONS -->
@@ -875,28 +893,7 @@
                             </li>
 
                             <!-- Salary Management -->
-                            <li class="nav-item">
-                                <a class="nav-link menu-arrow" href="#sidebarSalary" data-bs-toggle="collapse"
-                                    role="button" aria-expanded="false" aria-controls="sidebarSalary">
-                                    <span class="nav-icon">
-                                        <iconify-icon icon="solar:wallet-money-bold-duotone"></iconify-icon>
-                                    </span>
-                                    <span class="nav-text"> Quản lý lương </span>
-                                </a>
-                                <div class="collapse" id="sidebarSalary">
-                                    <ul class="nav sub-navbar-nav">
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('salary.settings') }}">Cài đặt</a>
-                                        </li>
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('salary.calculate') }}">Tính lương</a>
-                                        </li>
-                                        <li class="sub-nav-item">
-                                            <a class="sub-nav-link" href="{{ route('salary.history') }}">Lịch sử</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
+                            
                         @endif
 
                         <!-- STAFF ONLY SECTIONS -->

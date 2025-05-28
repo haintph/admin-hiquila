@@ -62,7 +62,6 @@ class UserController extends Controller
             'dob' => 'nullable|date',
             'gender' => 'required|in:male,female,other',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'salary' => 'required|numeric|min:0',
             'hire_date' => 'required|date',
             'status' => 'required|in:active,inactive,terminated',
         ]);
@@ -84,7 +83,6 @@ class UserController extends Controller
             'dob' => $validatedData['dob'],
             'gender' => $validatedData['gender'],
             'avatar' => $avatarPath,
-            'salary' => $validatedData['salary'],
             'hire_date' => $validatedData['hire_date'],
             'status' => $validatedData['status'],
         ]);
@@ -112,7 +110,6 @@ class UserController extends Controller
             'dob' => 'nullable|date',
             'gender' => 'required|in:male,female,other',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'salary' => 'required|numeric|min:0',
             'hire_date' => 'required|date',
             'status' => 'required|in:active,inactive,terminated',
         ]);

@@ -234,6 +234,15 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('supplier', SupplierController::class);
         Route::resource('purchase', InventoryPurchaseController::class);
         Route::resource('inventory_logs', InventoryLogController::class);
+        
+        Route::prefix('salary')->name('admin.salary.')->group(function () {
+            Route::get('/settings', [SalaryController::class, 'settings'])->name('settings');
+            Route::post('/settings', [SalaryController::class, 'updateSettings'])->name('updateSettings');
+            Route::get('/calculate', [SalaryController::class, 'calculateSalary'])->name('calculate');
+            Route::post('/save', [SalaryController::class, 'saveSalary'])->name('save');
+            Route::get('/history', [SalaryController::class, 'history'])->name('history');
+            Route::get('/export/{month}/{year}', [SalaryController::class, 'exportSalary'])->name('export');
+        });
     });
 
     // ===========================================
@@ -252,15 +261,15 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/attendance/update-shift/{id}', [ManagerController::class, 'updateShift'])->name('attendance.updateShift');
         });
 
-        // Salary Management
-        Route::prefix('salary')->name('salary.')->group(function () {
-            Route::get('/settings', [ManagerController::class, 'settings'])->name('settings');
-            Route::post('/settings', [ManagerController::class, 'updateSettings'])->name('updateSettings');
-            Route::get('/calculate', [ManagerController::class, 'calculateSalary'])->name('calculate');
-            Route::post('/save', [ManagerController::class, 'saveSalary'])->name('save');
-            Route::get('/history', [ManagerController::class, 'history'])->name('history');
-            Route::get('/export/{month}/{year}', [ManagerController::class, 'exportSalary'])->name('export');
-        });
+        // // Salary Management
+        // Route::prefix('salary')->name('salary.')->group(function () {
+        //     Route::get('/settings', [ManagerController::class, 'settings'])->name('settings');
+        //     Route::post('/settings', [ManagerController::class, 'updateSettings'])->name('updateSettings');
+        //     Route::get('/calculate', [ManagerController::class, 'calculateSalary'])->name('calculate');
+        //     Route::post('/save', [ManagerController::class, 'saveSalary'])->name('save');
+        //     Route::get('/history', [ManagerController::class, 'history'])->name('history');
+        //     Route::get('/export/{month}/{year}', [ManagerController::class, 'exportSalary'])->name('export');
+        // });
     });
 
     // ===========================================

@@ -15,9 +15,9 @@ class SalaryController extends Controller
     public function settings()
     {
         $settings = SalarySetting::all()->keyBy('role');
-        $roles = ['manager', 'staff', 'chef', 'cashier'];
+        $roles = ['manager', 'staff', 'chef'];
 
-        return view('manager.salary.settings', compact('settings', 'roles'));
+        return view('admin.salary.settings', compact('settings', 'roles'));
     }
 
     // Cập nhật cài đặt lương
@@ -76,7 +76,7 @@ class SalaryController extends Controller
         $month = $request->month ?? date('n');
         $year = $request->year ?? date('Y');
 
-        $users = User::whereIn('role', ['manager', 'staff', 'chef', 'cashier'])->get();
+        $users = User::whereIn('role', ['manager', 'staff', 'chef'])->get();
         $results = [];
 
         foreach ($users as $user) {
@@ -84,57 +84,9 @@ class SalaryController extends Controller
             $results[] = $salaryData;
         }
 
-        return view('manager.salary.calculate', compact('results', 'month', 'year'));
+        return view('admin.salary.calculate', compact('results', 'month', 'year'));
     }
 
-    // Tính lương cho 1 user cụ thể
-    // private function calculateUserSalary($user, $month, $year)
-    // {
-    //     // Lấy cài đặt lương theo role
-    //     $setting = SalarySetting::where('role', $user->role)->first();
-    //     if (!$setting) {
-    //         return [
-    //             'user' => $user,
-    //             'error' => 'Chưa cài đặt lương cho role này'
-    //         ];
-    //     }
-
-    //     // Tính số ngày trong tháng
-    //     $daysInMonth = Carbon::create($year, $month)->daysInMonth;
-    //     $startDate = Carbon::create($year, $month, 1)->startOfDay();
-    //     $endDate = Carbon::create($year, $month)->endOfMonth()->endOfDay();
-
-    //     // Lấy dữ liệu điểm danh trong tháng
-    //     $attendanceData = $this->getAttendanceData($user->id, $startDate, $endDate);
-
-    //     // Tính toán các thành phần lương
-    //     $baseSalary = $setting->base_salary;
-    //     $totalHours = $attendanceData['total_hours'];
-    //     $daysWorked = $attendanceData['days_worked'];
-
-    //     // Tính lương theo giờ
-    //     $hourlySalary = $totalHours * $setting->hourly_rate;
-
-    //     // Tính lương tăng ca (nếu vượt quá giờ chuẩn)
-    //     $overtimeHours = max(0, $totalHours - $setting->required_hours_per_month);
-    //     $overtimeSalary = $overtimeHours * $setting->overtime_rate;
-
-    //     // Tổng lương
-    //     $totalSalary = $baseSalary + $hourlySalary + $overtimeSalary;
-
-    //     return [
-    //         'user' => $user,
-    //         'setting' => $setting,
-    //         'base_salary' => $baseSalary,
-    //         'hourly_salary' => $hourlySalary,
-    //         'overtime_salary' => $overtimeSalary,
-    //         'total_salary' => $totalSalary,
-    //         'total_hours' => $totalHours,
-    //         'overtime_hours' => $overtimeHours,
-    //         'days_worked' => $daysWorked,
-    //         'attendance_details' => $attendanceData['details']
-    //     ];
-    // }
     // Trong SalaryController.php
     private function calculateUserSalary($user, $month, $year)
     {
@@ -285,11 +237,11 @@ class SalaryController extends Controller
         $records = $query->paginate(20);
 
         // Get all users for filter dropdown
-        $users = User::whereIn('role', ['manager', 'staff', 'chef', 'cashier'])
+        $users = User::whereIn('role', ['manager', 'staff', 'chef'])
             ->orderBy('name')
             ->get(['id', 'name']);
 
-        return view('manager.salary.history', compact('records', 'users'));
+        return view('admin.salary.history', compact('records', 'users'));
     }
 
     // Export filtered data
