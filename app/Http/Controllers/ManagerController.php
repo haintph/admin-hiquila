@@ -32,10 +32,10 @@ class ManagerController extends Controller
             ->whereIn('role', ['manager', 'staff', 'chef', 'cashier'])
             ->firstOrFail();
 
-        $currentTime = \Carbon\Carbon::now('Asia/Ho_Chi_Minh');
+        // Lấy thời gian hiện tại với timezone Việt Nam
+        $currentTime = Carbon::now('Asia/Ho_Chi_Minh');
 
         if ($request->status == 'active' && $user->status !== 'active') {
-
             // Kiểm tra ca làm việc
             $canCheckIn = $this->validateShiftTime($user->shift, $currentTime);
 
@@ -47,15 +47,19 @@ class ManagerController extends Controller
         if ($user->status !== 'terminated') {
             $user->status = $request->status;
 
+            // Cập nhật thời gian check-in là thời điểm hiện tại khi chuyển sang active
             if ($request->status == 'active' && !$user->check_in_time) {
-                $user->check_in_time = $currentTime;
-                $user->check_day = $currentTime->toDateString();
+                $user->check_in_time = $currentTime->toDateTimeString(); // Lưu đầy đủ datetime
+                $user->check_day = $currentTime->toDateString(); // Lưu ngày
+                
+                // Log để theo dõi
+                Log::info("User {$user->name} checked in at: " . $currentTime->format('Y-m-d H:i:s'));
             }
 
             $user->save();
         }
 
-        return redirect()->route('attendance.list')->with('success', 'Cập nhật điểm danh thành công!');
+        return redirect()->route('manager.attendance.list')->with('success', 'Cập nhật điểm danh thành công!');
     }
 
     private function validateShiftTime($shift, $currentTime)
@@ -89,7 +93,7 @@ class ManagerController extends Controller
         if ($currentDecimal < $shiftInfo['start']) {
             return [
                 'allowed' => false,
-                'message' => " Quá sớm để điểm danh! Hiện tại: {$timeString}. {$shiftInfo['name']} bắt đầu từ " .
+                'message' => "Quá sớm để điểm danh! Hiện tại: {$timeString}. {$shiftInfo['name']} bắt đầu từ " .
                     $this->decimalToTime($shiftInfo['start'])
             ];
         }
@@ -115,22 +119,33 @@ class ManagerController extends Controller
     public function checkOut(Request $request, $id)
     {
         $user = User::findOrFail($id);
+        
+        // Lấy thời gian hiện tại với timezone Việt Nam
+        $currentTime = Carbon::now('Asia/Ho_Chi_Minh');
 
         // Kiểm tra nếu nhân viên đã check-in trước đó
         if ($user->check_in_time) {
-            $user->check_out_time = now(); // Lưu lại thời gian check-out
+            // Lưu thời gian check-out là thời điểm hiện tại
+            $user->check_out_time = $currentTime->toDateTimeString();
 
-            // Tính toán số giờ làm việc và lưu vào database
+            // Tính toán số giờ làm việc chính xác
             if ($user->check_in_time && $user->check_out_time) {
-                $checkInTime = \Carbon\Carbon::parse($user->check_in_time);
-                $checkOutTime = \Carbon\Carbon::parse($user->check_out_time);
-                $workHours = $checkInTime->diffInHours($checkOutTime);
+                $checkInTime = Carbon::parse($user->check_in_time)->setTimezone('Asia/Ho_Chi_Minh');
+                $checkOutTime = Carbon::parse($user->check_out_time)->setTimezone('Asia/Ho_Chi_Minh');
+                
+                // Tính chính xác số giờ (bao gồm phút và giây)
+                $workMinutes = $checkInTime->diffInMinutes($checkOutTime);
+                $workHours = round($workMinutes / 60, 2); // Làm tròn 2 chữ số thập phân
+                
                 $user->workHours = $workHours;
+                
+                // Log để theo dõi
+                Log::info("User {$user->name} checked out at: " . $currentTime->format('Y-m-d H:i:s') . ", worked {$workHours} hours");
             }
         }
 
-        // Đặt lại trạng thái thành "inactive"
-        // $user->status = 'inactive';
+        // Có thể đặt trạng thái về inactive sau khi checkout (tuỳ chọn)
+        $user->status = 'inactive';
 
         $user->save();
 
@@ -140,7 +155,11 @@ class ManagerController extends Controller
     public function resetAttendance(Request $request, $id)
     {
         $user = User::findOrFail($id);
+        $currentTime = Carbon::now('Asia/Ho_Chi_Minh');
 
+        // Log trước khi reset
+        Log::info("Resetting attendance for {$user->name} at " . $currentTime->format('Y-m-d H:i:s'));
+        
         // Đặt trạng thái về "vắng mặt"
         $user->status = 'inactive';
 
@@ -152,7 +171,7 @@ class ManagerController extends Controller
 
         $user->save();
 
-        return back()->with('success', 'Reset thành công! Trạng thái và thời gian đã được đặt lại.');
+        return back()->with('success', 'Reset thành công lúc ' . $currentTime->format('H:i:s d/m/Y'));
     }
 
     public function updateNote(Request $request, $id)

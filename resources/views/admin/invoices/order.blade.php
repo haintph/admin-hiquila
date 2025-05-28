@@ -416,7 +416,8 @@
                                                 <span class="dish-badge badge bg-danger">Hết hàng</span>
                                             @endif
 
-                                            <img src="{{ $dish->image ? asset('storage/' . $dish->image) : 'https://via.placeholder.com/300x200?text=' . urlencode($dish->name) }}"
+                                            <img height="170px"
+                                                src="{{ $dish->image ? asset('storage/' . $dish->image) : 'https://via.placeholder.com/300x200?text=' . urlencode($dish->name) }}"
                                                 class="dish-image" alt="{{ $dish->name }}">
                                             <div class="card-body">
                                                 <h5 class="card-title">{{ $dish->name }}</h5>
@@ -601,7 +602,19 @@
                                                             <td class="align-middle px-3 py-2">
                                                                 <div class="d-flex align-items-center">
                                                                     <div class="me-2">
-                                                                        <i class="fas fa-edit text-primary"></i>
+                                                                        <form
+                                                                            action="{{ route('invoices.removeItem', ['invoice_id' => $invoice->invoice_id, 'item_id' => $item->detail_id]) }}"
+                                                                            method="POST">
+                                                                            @csrf
+                                                                            @method('DELETE')
+                                                                            <button type="submit"
+                                                                                class="btn btn-sm text-danger border-0 p-1"
+                                                                                onclick="return confirm('Bạn có chắc muốn xóa món này?')"
+                                                                                style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
+                                                                                <i class="fas fa-times"
+                                                                                    style="font-size: 10px;"></i>
+                                                                            </button>
+                                                                        </form>
                                                                     </div>
                                                                     <div class="flex-grow-1">
                                                                         <p class="mb-0 fw-medium">{{ $item->dish->name }}
@@ -610,10 +623,10 @@
                                                                             <small
                                                                                 class="text-muted d-block">{{ $item->variant->name }}</small>
                                                                         @endif
-                                                                        <small class="text-muted">
+                                                                        {{-- <small class="text-muted">
                                                                             {{ number_format($item->price, 0, ',', '.') }}
                                                                             VND
-                                                                        </small>
+                                                                        </small> --}}
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -663,8 +676,7 @@
                                                                     <small class="text-danger d-block mt-1">Hết
                                                                         hàng</small>
                                                                 @else
-                                                                    <small class="text-muted d-block mt-1">Còn
-                                                                        {{ $item->availableToOrder }}</small>
+                                                                    <small class="text-muted d-block mt-1"></small>
                                                                 @endif
                                                             </td>
 
@@ -673,22 +685,6 @@
                                                                     {{ number_format($item->quantity * $item->price, 0, ',', '.') }}
                                                                     VND
                                                                 </div>
-                                                            </td>
-
-                                                            <td class="align-middle px-2">
-                                                                <form
-                                                                    action="{{ route('invoices.removeItem', ['invoice_id' => $invoice->invoice_id, 'item_id' => $item->detail_id]) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit"
-                                                                        class="btn btn-sm text-danger border-0 p-1"
-                                                                        onclick="return confirm('Bạn có chắc muốn xóa món này?')"
-                                                                        style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
-                                                                        <i class="fas fa-times"
-                                                                            style="font-size: 10px;"></i>
-                                                                    </button>
-                                                                </form>
                                                             </td>
                                                         </tr>
                                                     @endforeach

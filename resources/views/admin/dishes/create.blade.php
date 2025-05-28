@@ -56,12 +56,12 @@
                                     </div>
                                 </div>
 
-                                <!-- Album ảnh -->
+                                {{-- <!-- Album ảnh -->
                                 <div class="col-md-6">
                                     <label class="form-label fw-bold">Album ảnh (có thể chọn nhiều ảnh)</label>
                                     <input type="file" name="images[]" class="form-control" multiple accept="image/*" onchange="previewImages(event)">
                                     <div class="mt-2 d-flex flex-wrap gap-2" id="imagePreviewContainer"></div>
-                                </div>
+                                </div> --}}
 
                                 <!-- Miêu tả -->
                                 <div class="col-12">

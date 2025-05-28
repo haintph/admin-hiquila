@@ -7,7 +7,7 @@
 <head>
     <!-- Title Meta -->
     <meta charset="utf-8" />
-    <title>Dashboard | Larkon - Responsive Admin Dashboard Template</title>
+    <title>Hiquila restaurent</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="A fully responsive premium admin dashboard template" />
     <meta name="author" content="Techzaa" />
@@ -601,18 +601,18 @@
                     @endphp
 
                     @foreach ($logos as $logo)
-                        <img src="{{ $logo->image_url }}" class="logo-lg custom-logo-lg"
-                            alt="logo {{ $logo->id }}" style="width: 100%;">
+                        <img src="{{ $logo->image_url }}" class="logo_customer"
+                            alt="logo {{ $logo->id }}" style="">
                     @endforeach
                 </a>
             </div>
 
 
             <!-- Menu Toggle Button (sm-hover) -->
-            <button type="button" class="button-sm-hover" aria-label="Show Full Sidebar">
+            {{-- <button type="button" class="button-sm-hover" aria-label="Show Full Sidebar">
                 <iconify-icon icon="solar:double-alt-arrow-right-bold-duotone"
                     class="button-sm-hover-icon"></iconify-icon>
-            </button>
+            </button> --}}
 
             <div class="scrollbar" data-simplebar>
                 <ul class="navbar-nav" id="navbar-nav">
@@ -850,14 +850,14 @@
                             </li>
 
                             <!-- Attendance Management -->
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a class="nav-link" href="{{ route('admin.attendance.list') }}">
                                     <span class="nav-icon">
                                         <iconify-icon icon="solar:calendar-mark-bold-duotone"></iconify-icon>
                                     </span>
                                     <span class="nav-text"> Chấm công </span>
                                 </a>
-                            </li>
+                            </li> --}}
                         @endif
 
                         <!-- MANAGER ONLY SECTIONS -->
@@ -1029,6 +1029,16 @@
                             </a>
                         </li>
 
+                        <!-- Register -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">
+                                <span class="nav-icon">
+                                    <iconify-icon icon="solar:user-plus-bold-duotone"></iconify-icon>
+                                </span>
+                                <span class="nav-text"> Đăng ký </span>
+                            </a>
+                        </li>
+
                         <!-- Information -->
                         <li class="nav-item">
                             <a class="nav-link" href="#">
@@ -1092,7 +1102,7 @@
 
             <!-- ========== Footer Start ========== -->
             <footer class="footer">
-                <div class="container-fluid">
+                {{-- <div class="container-fluid">
                     <div class="row">
                         <div class="col-12 text-center">
                             <script>
@@ -1102,6 +1112,18 @@
                                 class="fs-18 align-middle text-danger"></iconify-icon> <a
                                 href="https://1.envato.market/techzaa" class="fw-bold footer-text"
                                 target="_blank">Techzaa</a>
+                        </div>
+                    </div>
+                </div> --}}
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <script>
+                                document.write(new Date().getFullYear())
+                            </script> &copy; Ocean Pearl Restaurant. Crafted with
+                            <iconify-icon icon="iconamoon:heart-duotone"
+                                class="fs-18 align-middle text-danger"></iconify-icon>
+                            for seafood lovers
                         </div>
                     </div>
                 </div>

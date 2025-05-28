@@ -22,12 +22,17 @@
             @if(!isset($table))
             <div class="alert alert-info mb-4">
                 <h6 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Quy tắc tạo bàn</h6>
-                <ul class="mb-0">
+                <ul class="mb-2">
                     <li><strong>Thứ tự theo khu vực:</strong> Phải tạo A1 trước A2, B1 trước B2, C1 trước C2...</li>
                     <li><strong>Số bàn tự động:</strong> Để trống để hệ thống tự tạo số tiếp theo</li>
                     <li><strong>Sức chứa:</strong> Tối đa 20 người/bàn, tổng không vượt sức chứa khu vực</li>
                     <li><strong>Format:</strong> A1, A2, A3... (khu A) | B1, B2, B3... (khu B)</li>
                 </ul>
+                <div class="alert alert-warning mt-2 mb-0">
+                    <strong>⚠️ Quy tắc sức chứa theo loại bàn:</strong><br>
+                    • Bàn đơn: 1-2 người | Bàn đôi: 2-4 người | Bàn 4: 3-4 người | Bàn 6: 5-6 người<br>
+                    • Bàn 8: 7-8 người | Bàn dài: 6-12 người | Bàn VIP: 2-10 người | Bàn tròn: 6-20 người
+                </div>
             </div>
             @endif
 
@@ -87,21 +92,10 @@
                 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="capacity" class="form-label required">Sức chứa</label>
-                        <input type="number" class="form-control @error('capacity') is-invalid @enderror" 
-                               id="capacity" name="capacity" 
-                               value="{{ old('capacity', $table->capacity ?? '') }}" 
-                               min="1" max="20" required>
-                        @error('capacity')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <div class="form-text">Số người có thể ngồi tại bàn (tối đa 20)</div>
-                    </div>
-                    
-                    <div class="col-md-6">
                         <label for="table_type" class="form-label required">Loại bàn</label>
                         <select class="form-select @error('table_type') is-invalid @enderror" 
                                 id="table_type" name="table_type" required>
+                            <option value="">Chọn loại bàn</option>
                             @foreach($tableTypes as $type)
                                 <option value="{{ $type }}" {{ (old('table_type', $table->table_type ?? '') == $type) ? 'selected' : '' }}>
                                     {{ $type }}
@@ -111,6 +105,18 @@
                         @error('table_type')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="capacity" class="form-label required">Sức chứa</label>
+                        <input type="number" class="form-control @error('capacity') is-invalid @enderror" 
+                               id="capacity" name="capacity" 
+                               value="{{ old('capacity', $table->capacity ?? '') }}" 
+                               min="1" max="20" required>
+                        @error('capacity')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <div id="capacity-type-validation" class="form-text"></div>
                     </div>
                 </div>
                 
@@ -191,13 +197,16 @@
         const areaSelect = document.getElementById('area_id');
         const tableNumberInput = document.getElementById('table_number');
         const capacityInput = document.getElementById('capacity');
+        const tableTypeSelect = document.getElementById('table_type');
         const areaCapacityInfo = document.getElementById('area-capacity-info');
         const tableNumberSuggestion = document.getElementById('table-number-suggestion');
+        const capacityTypeValidation = document.getElementById('capacity-type-validation');
         const submitBtn = document.getElementById('submitBtn');
         
         // Khởi tạo
         updateTableNumberSuggestion();
         updateAreaCapacityInfo();
+        validateCapacityAndType();
         
         // Cập nhật khi thay đổi khu vực
         areaSelect.addEventListener('change', function() {
@@ -207,10 +216,54 @@
         });
         
         // Cập nhật khi thay đổi sức chứa bàn
-        capacityInput.addEventListener('change', updateAreaCapacityInfo);
+        capacityInput.addEventListener('change', function() {
+            updateAreaCapacityInfo();
+            validateCapacityAndType();
+        });
+        
+        // Cập nhật khi thay đổi loại bàn
+        tableTypeSelect.addEventListener('change', function() {
+            validateCapacityAndType();
+        });
         
         // Validate số bàn khi nhập
         tableNumberInput.addEventListener('input', validateTableNumber);
+        
+        function validateCapacityAndType() {
+            const capacity = parseInt(capacityInput.value);
+            const tableType = tableTypeSelect.value;
+            
+            if (!capacity || !tableType) {
+                capacityTypeValidation.innerHTML = '';
+                return;
+            }
+            
+            // Quy tắc sức chứa theo loại bàn
+            const typeCapacityRules = {
+                'Bàn đơn': [1, 2],
+                'Bàn đôi': [2, 4], 
+                'Bàn 4': [3, 4],
+                'Bàn 6': [5, 6],
+                'Bàn 8': [7, 8],
+                'Bàn dài': [6, 12],
+                'Bàn VIP': [2, 10],
+                'Bàn tròn': [6, 20]
+            };
+            
+            if (typeCapacityRules[tableType]) {
+                const [minCap, maxCap] = typeCapacityRules[tableType];
+                
+                if (capacity < minCap || capacity > maxCap) {
+                    capacityTypeValidation.innerHTML = `<span class="text-danger">⚠️ Loại bàn '${tableType}' chỉ phù hợp với sức chứa từ ${minCap} đến ${maxCap} người!</span>`;
+                    capacityInput.classList.add('is-invalid');
+                    submitBtn.disabled = true;
+                } else {
+                    capacityTypeValidation.innerHTML = `<span class="text-success">✓ Sức chứa phù hợp với loại bàn</span>`;
+                    capacityInput.classList.remove('is-invalid');
+                    submitBtn.disabled = false;
+                }
+            }
+        }
         
         function updateTableNumberSuggestion() {
             const areaId = areaSelect.value;
@@ -249,7 +302,6 @@
             const tableNumber = tableNumberInput.value.trim();
             
             if (!areaId || !tableNumber || isEdit) {
-                submitBtn.disabled = false;
                 return;
             }
             
@@ -270,11 +322,9 @@
                 if (!data.valid) {
                     tableNumberSuggestion.innerHTML = `<span class="text-danger">${data.message}</span>`;
                     tableNumberInput.classList.add('is-invalid');
-                    submitBtn.disabled = true;
                 } else {
                     tableNumberSuggestion.innerHTML = `<span class="text-success">✓ Số bàn hợp lệ</span>`;
                     tableNumberInput.classList.remove('is-invalid');
-                    submitBtn.disabled = false;
                 }
             })
             .catch(error => {

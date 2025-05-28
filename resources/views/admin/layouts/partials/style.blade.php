@@ -22,7 +22,10 @@
         object-fit: contain;
         border-radius: 8px;
     }
-    
+    .logo_customer{
+        width: 100px;
+        height: 80px;
+    }
     .custom-logo-lg {
         max-width: 180px !important;
         height: 55px !important;

@@ -75,8 +75,8 @@ class Table extends Model
     public function currentInvoice()
     {
         return $this->hasOne(Invoice::class, 'table_id', 'table_id')
-                    ->whereNotIn('status', ['Hủy đơn', 'Đã thanh toán'])
-                    ->latest();
+            ->whereNotIn('status', ['Hủy đơn', 'Đã thanh toán'])
+            ->latest();
     }
 
     /**
@@ -169,7 +169,11 @@ class Table extends Model
             return false;
         }
 
-        return now()->diffInMinutes($this->reserved_time, false) > $toleranceMinutes;
+        // Thời điểm tối đa được phép đến (reserved_time + tolerance)
+        $maxAllowedTime = $this->reserved_time->addMinutes($toleranceMinutes);
+
+        // Kiểm tra xem hiện tại đã quá thời gian cho phép chưa
+        return now()->greaterThan($maxAllowedTime);
     }
 
     /**
@@ -202,7 +206,7 @@ class Table extends Model
     public function scopeReservedByPhone($query, $phone)
     {
         return $query->where('reserved_phone', $phone)
-                    ->whereIn('status', ['Đã đặt', 'Đến muộn']);
+            ->whereIn('status', ['Đã đặt', 'Đến muộn']);
     }
 
     /**
@@ -211,7 +215,7 @@ class Table extends Model
     public function scopeReservedByName($query, $name)
     {
         return $query->where('reserved_by', $name)
-                    ->whereIn('status', ['Đã đặt', 'Đến muộn']);
+            ->whereIn('status', ['Đã đặt', 'Đến muộn']);
     }
 
     /**
@@ -288,7 +292,6 @@ class Table extends Model
 
             DB::commit();
             return true;
-
         } catch (\Exception $e) {
             DB::rollback();
             throw $e;
@@ -310,7 +313,7 @@ class Table extends Model
      */
     public function scopeByCustomer($query, $phone, $name = null)
     {
-        return $query->where(function($q) use ($phone, $name) {
+        return $query->where(function ($q) use ($phone, $name) {
             $q->where('reserved_phone', $phone);
             if ($name) {
                 $q->orWhere('reserved_by', $name);
@@ -367,7 +370,6 @@ class Table extends Model
 
             DB::commit();
             return true;
-
         } catch (\Exception $e) {
             DB::rollback();
             throw $e;

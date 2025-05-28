@@ -132,11 +132,11 @@
                                 </div>
 
                                 <!-- Album ảnh dạng danh sách -->
-                                <div class="card-body">
+                                {{-- <div class="card-body">
                                     <div class="row">
                                         @include('admin.dishes.ablum')
                                     </div>
-                                </div>
+                                </div> --}}
 
                             </div>
                         </div>

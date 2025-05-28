@@ -16,34 +16,64 @@ class CheckLateArrivals extends Command
     public function handle()
     {
         $toleranceMinutes = $this->option('minutes');
-        $lateThreshold = now()->subMinutes($toleranceMinutes);
 
         $this->info("Checking for table reservations late by more than {$toleranceMinutes} minutes...");
+        $this->info("Current time: " . now()->format('Y-m-d H:i:s'));
 
-        // Tìm các bàn đã đặt nhưng quá giờ
+        // FIXED: Tính toán thời gian đúng cách
+        // Tìm các bàn có reserved_time + tolerance < hiện tại
+        $lateThreshold = now()->subMinutes($toleranceMinutes);
+
         $lateTables = Table::where('status', 'Đã đặt')
             ->whereNotNull('reserved_time')
+            ->whereNotNull('reserved_by')
             ->where('reserved_time', '<', $lateThreshold)
             ->with('area')
             ->get();
 
+        $this->info("Late threshold: {$lateThreshold->format('Y-m-d H:i:s')}");
+        $this->info("Found {$lateTables->count()} potentially late tables");
+
         if ($lateTables->count() === 0) {
             $this->info('No late arrivals found.');
+            
+            // Debug info
+            $allReserved = Table::where('status', 'Đã đặt')
+                ->whereNotNull('reserved_time')
+                ->whereNotNull('reserved_by')
+                ->get();
+                
+            $this->info("Debug - Total reserved tables: {$allReserved->count()}");
+            foreach ($allReserved as $table) {
+                $reservedTime = Carbon::parse($table->reserved_time);
+                $minutesAgo = now()->diffInMinutes($reservedTime);
+                $this->line("  - Table {$table->table_number}: {$reservedTime->format('H:i')} ({$minutesAgo} minutes ago)");
+            }
+            
             return 0;
         }
 
         $updated = 0;
         foreach ($lateTables as $table) {
-            $table->markAsLate();
-            $updated++;
-            
-            $areaName = $table->area ? $table->area->name : 'Unknown Area';
-            $this->line("Table {$table->table_number} ({$areaName}) marked as late");
-            $this->line("  - Reserved by: {$table->reserved_by}");
-            $this->line("  - Phone: {$table->reserved_phone}");
-            $this->line("  - Reserved time: {$table->reserved_time->format('d/m/Y H:i')}");
-            $this->line("  - Party size: {$table->reserved_party_size} guests");
-            $this->line("");
+            try {
+                $table->markAsLate();
+                $updated++;
+                
+                $areaName = $table->area ? $table->area->name : 'Unknown Area';
+                $reservedTime = Carbon::parse($table->reserved_time);
+                $minutesLate = now()->diffInMinutes($reservedTime);
+                
+                $this->line("✓ Table {$table->table_number} ({$areaName}) marked as late");
+                $this->line("  - Reserved by: {$table->reserved_by}");
+                $this->line("  - Phone: {$table->reserved_phone}");
+                $this->line("  - Reserved time: {$reservedTime->format('d/m/Y H:i')}");
+                $this->line("  - Minutes late: {$minutesLate}");
+                $this->line("  - Party size: {$table->reserved_party_size} guests");
+                $this->line("");
+                
+            } catch (\Exception $e) {
+                $this->error("✗ Failed to update Table {$table->table_number}: " . $e->getMessage());
+            }
         }
 
         $this->info("Updated {$updated} table(s) to 'Đến muộn' status.");
@@ -53,21 +83,7 @@ class CheckLateArrivals extends Command
             'tolerance_minutes' => $toleranceMinutes,
             'late_tables' => $lateTables->pluck('table_id')->toArray()
         ]);
-        
+
         return 0;
     }
 }
-
-// Đăng ký trong app/Console/Kernel.php:
-// protected function schedule(Schedule $schedule)
-// {
-//     $schedule->command('tables:check-late')->everyFiveMinutes();
-//     
-//     // Hoặc chạy mỗi phút để kiểm tra chính xác hơn
-//     // $schedule->command('tables:check-late')->everyMinute();
-//     
-//     // Hoặc chỉ chạy trong giờ hoạt động nhà hàng
-//     // $schedule->command('tables:check-late')
-//     //          ->everyFiveMinutes()
-//     //          ->between('08:00', '23:00');
-// }

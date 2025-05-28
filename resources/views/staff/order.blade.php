@@ -416,7 +416,7 @@
                                                 <span class="dish-badge badge bg-danger">Hết hàng</span>
                                             @endif
 
-                                            <img src="{{ $dish->image ? asset('storage/' . $dish->image) : 'https://via.placeholder.com/300x200?text=' . urlencode($dish->name) }}"
+                                            <img height="170px" src="{{ $dish->image ? asset('storage/' . $dish->image) : 'https://via.placeholder.com/300x200?text=' . urlencode($dish->name) }}"
                                                 class="dish-image" alt="{{ $dish->name }}">
                                             <div class="card-body">
                                                 <h5 class="card-title">{{ $dish->name }}</h5>
